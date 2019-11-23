@@ -17,10 +17,18 @@
 #include <getopt.h>
 #include <stdlib.h>
 
-#define SCRIPT_VERSION "v1.0.0-beta-6, Nov 23, 2019"
+#define SCRIPT_VERSION "v1.0.0-beta-8, Nov 23, 2019"
+
+#ifndef COMMIT_HASH
+#define COMMIT_HASH "unknown"
+#endif
 
 void print_version() {
   printf("Version: %s\n", SCRIPT_VERSION);
+}
+
+void print_commit() {
+  printf("%s\n", COMMIT_HASH);
 }
 
 void print_usage(const char* name) {
@@ -32,6 +40,7 @@ void print_usage(const char* name) {
   printf("  -s, --hash      generate a checksum for a file(s) (default)\n");
   printf("  -c, --check     check a files checksum\n");
   printf("  -h, --help      print help menu\n");
+  printf("  -C, --commit    print the github commit hash\n");
   printf("  -V, --version   print version\n");
   printf("\n");
 }
@@ -178,10 +187,11 @@ int main(int argc, char** argv) {
     {"check", no_argument, 0, 'c'},
     {"help", no_argument, 0, 'h'},
     {"version", no_argument, 0, 'V'},
+    {"commit", no_argument, 0, 'C'},
     {NULL, 0, 0, 0}
   };
 
-  while ((opt = getopt_long(argc, argv, "schV", long_options, 0)) != -1) {
+  while ((opt = getopt_long(argc, argv, "schCV", long_options, 0)) != -1) {
     switch (opt) {
       case 's':
         checksum_file = 1;
@@ -196,6 +206,10 @@ int main(int argc, char** argv) {
         print_version();
         return(0);
 
+      case 'C':
+        print_commit();
+        return(0);
+ 
       case 'h':
         print_usage(argv[0]);
         return(0);

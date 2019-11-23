@@ -2,7 +2,7 @@
 # email: westleyr@nym.hush.com
 # Date: Nov 23, 2019
 # https://github.com/WestleyR/ssum
-# Version-1.0.0
+# Version-1.0.1
 #
 # The Clear BSD License
 #
@@ -18,15 +18,23 @@ TARGET = ssum
 
 PREFIX = /usr/local
 
-MAIN = src/main-binaryfile.c
+MAIN = src/main-ssum.c
+
+COMMIT = "$(shell git log -1 --oneline --decorate=short --no-color || ( echo 'ERROR: unable to get commit hash' >&2 ; echo unknown ) )"
+
+CFLAGS += -DCOMMIT_HASH=\"$(COMMIT)\"
+
+ifeq ($(DEBUG), true)
+	CFLAGS += -DDEBUG
+endif
 
 .PHONY:
 all: $(TARGET)
 
 .PHONY:
 $(TARGET): $(MAIN)
-	$(CC) $(CFLAGS) $(MAIN) -o $(TARGET)
-
+	$(CC) $(CFLAGS) -o $(TARGET) $(MAIN)
+	
 .PHONY:
 static: $(MAIN)
 	$(CC) $(CFLAGS) -static -o $(TARGET) $(MAIN)
@@ -48,6 +56,6 @@ clean:
 uninstall: $(PREFIX)/$(TARGET)
 	rm -f $(PREFIX)/$(TARGET)
 
-
-# vim: tabstop=4 noexpandtab 
-
+#
+# End Makefile
+#
