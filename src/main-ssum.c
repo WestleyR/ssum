@@ -1,8 +1,8 @@
 // created by: WestleyR
 // email: westleyr@nym.hush.com
 // https://github.com/WestleyR/ssum
-// date: Nov 23, 2019
-// version-1.0.0
+// date: Nov 24, 2019
+// version-2.0.0
 //
 // The Clear BSD License
 //
@@ -17,7 +17,7 @@
 #include <getopt.h>
 #include <stdlib.h>
 
-#define SCRIPT_VERSION "v1.0.0, Nov 23, 2019"
+#define SCRIPT_VERSION "v2.0.0-beta-1, Nov 24, 2019"
 
 #ifndef COMMIT_HASH
 #define COMMIT_HASH "unknown"
@@ -45,7 +45,7 @@ void print_usage(const char* name) {
   printf("\n");
 }
 
-static unsigned long gen_hash(const char *message, int print) {
+unsigned long gen_hash(const char *message, int print) {
   unsigned long sum = 0;
   int c;
 
@@ -62,75 +62,55 @@ static unsigned long gen_hash(const char *message, int print) {
 
 char* gen_checksum_file(const char* in, int print_out){
   FILE *fp_in;
-  char file_line[256];
 
   char hsum[512];
   hsum[0] = '\0';
 
-  int line_count = 0;
-
   fp_in = fopen(in, "r");
-  if (!fp_in) {
+  if (fp_in == NULL) {
     perror(in);
     printf("Unable to open file\n");
     return(NULL);
   }
 
-  while (fgets(file_line, sizeof(file_line), fp_in)) {
-    unsigned char h = gen_hash(file_line, 0);
-    char s[10];
-    sprintf(s, "%02x", h);
-    strcat(hsum, s);
+  int line_count = 0;
+  char line[256];
+  line[0] = '\0';
+  int c = 0;
+
+  while (c != EOF) {
+    c = fgetc(fp_in); 
+    if (c == EOF) {
+      break;
+    }
+
+    line[line_count] = c;
     line_count++;
+
+    if (line_count >= 5) {
+      line[line_count] = '\0';
+#ifdef DEBUG
+      printf("Block: %s\n", line);
+#endif
+      unsigned char h = gen_hash(line, 0);
+      char s[10];
+      sprintf(s, "%02x", h);
+      strcat(hsum, s);
+
+      line[0] = '\0';
+      line_count = 0;
+    }
   }
   fclose(fp_in);
-
-  // Add a buffer to make hsum a known length.
-  for (int i = strlen(hsum); i < 511; i++) {
-    strcat(hsum, "0");
-  }
 
 #ifdef DEBUG
   printf("Unmodifyed hash: %s\n", hsum);
 #endif
 
-  char hash[256];
-  hash[0] = '\0';
-
-  static const int max_hash_len = 32;
-  static const int max_block = 16;
-
-  char block_hash[40];
-  int block_index = 0;
-  for (int i = 0; i < strlen(hsum); i++) {
-    block_hash[block_index] = hsum[i];
-    block_index++;
-    if (block_index >= max_block) {
-      block_hash[block_index] = '\0';
-#ifdef DEBUG
-      printf("Block: %s\n", block_hash);
-#endif
-      unsigned char h = gen_hash(block_hash, 0);
-      char s[10];
-      sprintf(s, "%02x", h);
-      strcat(hash, s);
-      block_hash[0] = '\0';
-      block_index = 0;
-    }
-  }
-
-  for (int i = strlen(hash); i < max_hash_len; i++) {
-    strcat(hash, "0");
-  }
-
-  if (print_out) {
-    printf("%s %s\n", hash, in);
-  }
-
   char* ret_hash;
   ret_hash = (char*) malloc(256);
 
-  strcpy(ret_hash, hash);
+  strcpy(ret_hash, hsum);
 
   return(ret_hash);
 }
@@ -227,7 +207,8 @@ int main(int argc, char** argv) {
     }
     for (int i = optind; i < argc; i++) {
       if (checksum_file) {
-        gen_checksum_file(argv[i], 1);
+        char* filehash = gen_checksum_file(argv[i], 0);
+        printf("%s %s\n", filehash, argv[i]);
       } else if (check_file) {
         if (argc - optind > 1) {
           fprintf(stderr, "Only one file allowed\n");
