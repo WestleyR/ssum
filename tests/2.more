@@ -1,0 +1,6 @@
+
+set -e
+
+./ssum -c tests/testdata/test.more.ssum
+
+

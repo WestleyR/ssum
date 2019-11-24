@@ -17,7 +17,7 @@
 #include <getopt.h>
 #include <stdlib.h>
 
-#define SCRIPT_VERSION "v2.0.0-beta-1, Nov 24, 2019"
+#define SCRIPT_VERSION "v2.0.0-beta-2, Nov 24, 2019"
 
 #ifndef COMMIT_HASH
 #define COMMIT_HASH "unknown"
@@ -81,6 +81,10 @@ char* gen_checksum_file(const char* in, int print_out){
   while (c != EOF) {
     c = fgetc(fp_in); 
     if (c == EOF) {
+      unsigned char h = gen_hash(line, 0);
+      char s[10];
+      sprintf(s, "%02x", h);
+      strcat(hsum, s);
       break;
     }
 
@@ -106,6 +110,40 @@ char* gen_checksum_file(const char* in, int print_out){
 #ifdef DEBUG
   printf("Unmodifyed hash: %s\n", hsum);
 #endif
+
+  if (strlen(hsum) > 64) {
+    char checksum[256];
+    checksum[0] = '\0';
+    char block[256];
+    int h = 0;
+    block[0] = '\0';
+    while (strlen(hsum) > 64) {
+#ifdef DEBUG
+      printf("looping: %ld\n", strlen(hsum));
+#endif
+      for (int i = 0; i < strlen(hsum); i++) {
+        block[h] = hsum[i];
+        h++;
+        if (h >= 5) {
+          block[h] = '\0';
+          unsigned char c = gen_hash(block, 0);
+          char s[10];
+          sprintf(s, "%02x", c);
+          strcat(checksum, s);
+
+          block[0] = '\0';
+          h = 0;
+        }
+      }
+#ifdef DEBUG
+      printf("checksum: %s\n", checksum);
+#endif
+      strcpy(hsum, checksum);
+      block[0] = '\0';
+      h = 0;
+      checksum[0] = '\0';
+    }
+  }
 
   char* ret_hash;
   ret_hash = (char*) malloc(256);
