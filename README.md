@@ -1,5 +1,7 @@
 # Simple checksum program for ascii files
 
+![](https://github.com/WestleyR/ssum/workflows/ssum%20CI/badge.svg)
+
 This is a simple example of a checksum program.
 
 ## Install
