@@ -17,7 +17,7 @@
 #include <getopt.h>
 #include <stdlib.h>
 
-#define SCRIPT_VERSION "v2.0.0-beta-4, Nov 24, 2019"
+#define SCRIPT_VERSION "v2.0.0-beta-6, Nov 24, 2019"
 
 #ifndef COMMIT_HASH
 #define COMMIT_HASH "unknown"
@@ -45,7 +45,7 @@ void print_usage(const char* name) {
   printf("\n");
 }
 
-unsigned long gen_hash(const char *message, int print) {
+unsigned long gen_hash(const char *message) {
   unsigned long sum = 0;
   int c;
 
@@ -53,14 +53,10 @@ unsigned long gen_hash(const char *message, int print) {
     sum = c + (sum << 6) + (sum << 16) - sum;
   }
 
-  if (print) {
-    printf("%02x", (unsigned char)sum);
-  }
-
   return(sum);
 }
 
-char* gen_checksum_file(const char* in, int print_out){
+char* gen_checksum_file(const char* in){
   FILE *fp_in;
 
   char hsum[512];
@@ -69,7 +65,7 @@ char* gen_checksum_file(const char* in, int print_out){
   fp_in = fopen(in, "r");
   if (fp_in == NULL) {
     perror(in);
-    printf("Unable to open file\n");
+    fprintf(stderr, "Unable to open file: %s\n", in);
     return(NULL);
   }
 
@@ -81,7 +77,7 @@ char* gen_checksum_file(const char* in, int print_out){
   while (c != EOF) {
     c = fgetc(fp_in); 
     if (c == EOF) {
-      unsigned char h = gen_hash(line, 0);
+      unsigned char h = gen_hash(line);
       char s[10];
       sprintf(s, "%02x", h);
       strcat(hsum, s);
@@ -96,7 +92,7 @@ char* gen_checksum_file(const char* in, int print_out){
 #ifdef DEBUG
       printf("Block: %s\n", line);
 #endif
-      unsigned char h = gen_hash(line, 0);
+      unsigned char h = gen_hash(line);
       char s[10];
       sprintf(s, "%02x", h);
       strcat(hsum, s);
@@ -129,7 +125,7 @@ char* gen_checksum_file(const char* in, int print_out){
           printf("Extra block: %s\n", block);
 #endif
           block[h] = '\0';
-          unsigned char c = gen_hash(block, 0);
+          unsigned char c = gen_hash(block);
           char s[10];
           sprintf(s, "%02x", c);
           strcat(checksum, s);
@@ -139,7 +135,7 @@ char* gen_checksum_file(const char* in, int print_out){
         }
         if (h >= 5) {
           block[h] = '\0';
-          unsigned char c = gen_hash(block, 0);
+          unsigned char c = gen_hash(block);
           char s[10];
           sprintf(s, "%02x", c);
           strcat(checksum, s);
@@ -170,7 +166,7 @@ int check_checksum_file(const char* file) {
   FILE* fp_in = fopen(file, "r");
   if (fp_in == NULL) {
     perror(file);
-    printf("Unable to open file\n");
+    fprintf(stderr, "Unable to open file: %s\n", file);
     return(1);
   }
 
@@ -183,7 +179,7 @@ int check_checksum_file(const char* file) {
     char* hash = strtok(file_line, " ");
     char* check_file = strtok(NULL, " ");
     check_file = strtok(check_file, "\n");
-    char* real_checksum = gen_checksum_file(check_file, 0);
+    char* real_checksum = gen_checksum_file(check_file);
     if (real_checksum == NULL) {
       fprintf(stderr, "Bad checksum file: %s\n", file);
       fclose(fp_in);
@@ -204,6 +200,25 @@ int check_checksum_file(const char* file) {
   fclose(fp_in);
 
   return(success);
+}
+
+int handle_files(const char* file, int checksum_file, int check_file) {
+  int ret = 0;
+
+  if (checksum_file) {
+    char* filehash = gen_checksum_file(file);
+    if (filehash == NULL) {
+      return(1);
+    }
+    printf("%s %s\n", filehash, file);
+  } else if (check_file) {
+    int ecode = check_checksum_file(file);
+    if (ecode != 0) {
+      ret = 1;
+    }
+  }
+
+  return(ret);
 }
 
 int main(int argc, char** argv) {
@@ -249,6 +264,11 @@ int main(int argc, char** argv) {
     }
   }
 
+  if (checksum_file && check_file) {
+    fprintf(stderr, "Only one action allowed\n");
+    return(22);
+  }
+
   int exit_code = 0;
 
   if (optind < argc) {
@@ -257,21 +277,9 @@ int main(int argc, char** argv) {
       return(1);
     }
     for (int i = optind; i < argc; i++) {
-      if (checksum_file) {
-        char* filehash = gen_checksum_file(argv[i], 0);
-        printf("%s %s\n", filehash, argv[i]);
-      } else if (check_file) {
-        if (argc - optind > 1) {
-          fprintf(stderr, "Only one file allowed\n");
-          return(22);
-        }
-        int ecode = check_checksum_file(argv[i]);
-        if (ecode != 0) {
-          exit_code = 1;
-        }
-      } else {
-        fprintf(stderr, "No action specifyed\n");
-        return(22);
+      int ecode = handle_files(argv[i], checksum_file, check_file);
+      if (ecode != 0) {
+        exit_code = 1;
       }
     }
   } else {
