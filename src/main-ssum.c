@@ -17,7 +17,7 @@
 #include <getopt.h>
 #include <stdlib.h>
 
-#define SCRIPT_VERSION "v2.0.0-beta-2, Nov 24, 2019"
+#define SCRIPT_VERSION "v2.0.0-beta-4, Nov 24, 2019"
 
 #ifndef COMMIT_HASH
 #define COMMIT_HASH "unknown"
@@ -34,7 +34,7 @@ void print_commit() {
 void print_usage(const char* name) {
   printf("Usage: %s [option] <file(s)...>\n", name);
   printf("\n");
-  printf("Compute a checksum for a ascii file.\n");
+  printf("Compute a checksum for a ascii file(s).\n");
   printf("\n");
   printf("Options:\n");
   printf("  -s, --hash      generate a checksum for a file(s) (default)\n");
@@ -124,6 +124,19 @@ char* gen_checksum_file(const char* in, int print_out){
       for (int i = 0; i < strlen(hsum); i++) {
         block[h] = hsum[i];
         h++;
+        if (i == strlen(hsum)-1) {
+#ifdef DEBUG
+          printf("Extra block: %s\n", block);
+#endif
+          block[h] = '\0';
+          unsigned char c = gen_hash(block, 0);
+          char s[10];
+          sprintf(s, "%02x", c);
+          strcat(checksum, s);
+
+          block[0] = '\0';
+          h = 0;
+        }
         if (h >= 5) {
           block[h] = '\0';
           unsigned char c = gen_hash(block, 0);
