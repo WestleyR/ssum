@@ -17,7 +17,7 @@
 #include <getopt.h>
 #include <stdlib.h>
 
-#define SCRIPT_VERSION "v2.0.0-beta-6, Nov 24, 2019"
+#define SCRIPT_VERSION "v2.0.0-beta-8, Nov 24, 2019"
 
 #ifndef COMMIT_HASH
 #define COMMIT_HASH "unknown"
@@ -57,9 +57,11 @@ unsigned long gen_hash(const char *message) {
 }
 
 char* gen_checksum_file(const char* in){
+  static const int block_size = 5;
+
   FILE *fp_in;
 
-  char hsum[512];
+  char hsum[4096];
   hsum[0] = '\0';
 
   fp_in = fopen(in, "r");
@@ -87,7 +89,7 @@ char* gen_checksum_file(const char* in){
     line[line_count] = c;
     line_count++;
 
-    if (line_count >= 5) {
+    if (line_count >= block_size) {
       line[line_count] = '\0';
 #ifdef DEBUG
       printf("Block: %s\n", line);
@@ -105,39 +107,40 @@ char* gen_checksum_file(const char* in){
 
 #ifdef DEBUG
   printf("Unmodifyed hash: %s\n", hsum);
+  printf("Total lines: %d\n", total_lines);
 #endif
 
   if (strlen(hsum) > 64) {
-    char checksum[256];
+    char checksum[2048];
     checksum[0] = '\0';
-    char block[256];
+    char block[block_size+1];
     int h = 0;
     block[0] = '\0';
     while (strlen(hsum) > 64) {
 #ifdef DEBUG
       printf("looping: %ld\n", strlen(hsum));
 #endif
-      for (int i = 0; i < strlen(hsum); i++) {
+      for (int i = 0; i <= strlen(hsum); i++) {
         block[h] = hsum[i];
         h++;
-        if (i == strlen(hsum)-1) {
+        if (i == strlen(hsum)) {
 #ifdef DEBUG
           printf("Extra block: %s\n", block);
 #endif
           block[h] = '\0';
-          unsigned char c = gen_hash(block);
+          unsigned char bh = gen_hash(block);
           char s[10];
-          sprintf(s, "%02x", c);
+          sprintf(s, "%02x", bh);
           strcat(checksum, s);
 
           block[0] = '\0';
           h = 0;
         }
-        if (h >= 5) {
+        if (h >= block_size) {
           block[h] = '\0';
-          unsigned char c = gen_hash(block);
+          unsigned char bh = gen_hash(block);
           char s[10];
-          sprintf(s, "%02x", c);
+          sprintf(s, "%02x", bh);
           strcat(checksum, s);
 
           block[0] = '\0';
