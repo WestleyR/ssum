@@ -17,7 +17,7 @@
 #include <getopt.h>
 #include <stdlib.h>
 
-#define SCRIPT_VERSION "v1.0.0-beta-8, Nov 23, 2019"
+#define SCRIPT_VERSION "v1.0.0, Nov 23, 2019"
 
 #ifndef COMMIT_HASH
 #define COMMIT_HASH "unknown"
@@ -45,7 +45,6 @@ void print_usage(const char* name) {
   printf("\n");
 }
 
-//static unsigned long gen_hash(unsigned char *message, int print) {
 static unsigned long gen_hash(const char *message, int print) {
   unsigned long sum = 0;
   int c;
@@ -209,7 +208,7 @@ int main(int argc, char** argv) {
       case 'C':
         print_commit();
         return(0);
- 
+
       case 'h':
         print_usage(argv[0]);
         return(0);
