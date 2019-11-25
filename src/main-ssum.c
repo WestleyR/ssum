@@ -13,11 +13,12 @@
 //
 
 #include <stdio.h>
+#include <stdint.h>
 #include <string.h>
 #include <getopt.h>
 #include <stdlib.h>
 
-#define SCRIPT_VERSION "v2.0.0-beta-8, Nov 24, 2019"
+#define SCRIPT_VERSION "v2.0.0-beta-10, Nov 24, 2019"
 
 #ifndef COMMIT_HASH
 #define COMMIT_HASH "unknown"
@@ -45,19 +46,47 @@ void print_usage(const char* name) {
   printf("\n");
 }
 
-unsigned long gen_hash(const char *message) {
-  unsigned long sum = 0;
-  int c;
+//unsigned long gen_hash(const char *message) {
+//  unsigned long sum = 0;
+//  int c;
+//
+//  while ((c = *message++) != '\0') {
+//    sum = c + (sum << 6) + (sum << 16) - sum;
+//  }
+//
+//  return(sum);
+//}
 
-  while ((c = *message++) != '\0') {
-    sum = c + (sum << 6) + (sum << 16) - sum;
-  }
 
-  return(sum);
+//uint16_t gen_hash(uint16_t *msg) {
+int gen_hash(const char *msg) {
+    uint8_t i;
+
+    // The init value.
+    uint16_t hash = 0x1d0f;
+
+    // The magic polynormial for CRC-CCITT.
+    static const uint16_t CRC_POLY = 0x1021;
+
+    int len = strlen(msg);
+
+    while (len-- >= 0) {
+        hash = hash ^ ((uint16_t)(*msg++ << 8));
+        for (i = 0; i < 8; i++) {
+            if (hash & 0x8000) {
+                hash = (hash << 1) ^ CRC_POLY;
+            } else {
+                hash = hash << 1;
+            }
+        }
+    }
+
+    return(hash);
 }
 
+
 char* gen_checksum_file(const char* in){
-  static const int block_size = 5;
+  static const int block_size = 200;
 
   FILE *fp_in;
 
@@ -79,7 +108,8 @@ char* gen_checksum_file(const char* in){
   while (c != EOF) {
     c = fgetc(fp_in); 
     if (c == EOF) {
-      unsigned char h = gen_hash(line);
+      //unsigned char h = gen_hash(line);
+      int h = gen_hash(line);
       char s[10];
       sprintf(s, "%02x", h);
       strcat(hsum, s);
@@ -94,7 +124,8 @@ char* gen_checksum_file(const char* in){
 #ifdef DEBUG
       printf("Block: %s\n", line);
 #endif
-      unsigned char h = gen_hash(line);
+      //unsigned char h = gen_hash(line);
+      int h = gen_hash(line);
       char s[10];
       sprintf(s, "%02x", h);
       strcat(hsum, s);
@@ -107,7 +138,6 @@ char* gen_checksum_file(const char* in){
 
 #ifdef DEBUG
   printf("Unmodifyed hash: %s\n", hsum);
-  printf("Total lines: %d\n", total_lines);
 #endif
 
   if (strlen(hsum) > 64) {
