@@ -18,14 +18,14 @@
 #include <getopt.h>
 #include <stdlib.h>
 
-#define SCRIPT_VERSION "v2.0.0-beta-10, Nov 24, 2019"
+#define SCRIPT_VERSION "v2.0.0-beta-12, Nov 24, 2019"
 
 #ifndef COMMIT_HASH
 #define COMMIT_HASH "unknown"
 #endif
 
 void print_version() {
-  printf("Version: %s\n", SCRIPT_VERSION);
+  printf("%s\n", SCRIPT_VERSION);
 }
 
 void print_commit() {
@@ -84,15 +84,13 @@ int gen_hash(const char *msg) {
     return(hash);
 }
 
-
 char* gen_checksum_file(const char* in){
-  static const int block_size = 200;
+  static const int block_size = 102;
 
-  FILE *fp_in;
-
-  char hsum[4096];
+  char hsum[128];
   hsum[0] = '\0';
 
+  FILE *fp_in;
   fp_in = fopen(in, "r");
   if (fp_in == NULL) {
     perror(in);
@@ -102,13 +100,11 @@ char* gen_checksum_file(const char* in){
 
   int line_count = 0;
   char line[256];
-  line[0] = '\0';
   int c = 0;
 
   while (c != EOF) {
     c = fgetc(fp_in); 
     if (c == EOF) {
-      //unsigned char h = gen_hash(line);
       int h = gen_hash(line);
       char s[10];
       sprintf(s, "%02x", h);
@@ -124,7 +120,6 @@ char* gen_checksum_file(const char* in){
 #ifdef DEBUG
       printf("Block: %s\n", line);
 #endif
-      //unsigned char h = gen_hash(line);
       int h = gen_hash(line);
       char s[10];
       sprintf(s, "%02x", h);
@@ -133,62 +128,41 @@ char* gen_checksum_file(const char* in){
       line[0] = '\0';
       line_count = 0;
     }
+    if (strlen(hsum) > 64) {
+      char block[200];
+      int h = 0;
+      static const int mini_block = 11;
+      char after_block[200];
+      for (int i = mini_block; i < strlen(hsum); i++) {
+        after_block[h] = hsum[i];
+        h++;
+      }
+      after_block[h] = '\0';
+#ifdef DEBUG
+      printf("BEFORE_BLOC: %s\n", hsum);
+      printf("AFTER_BLOCK: %s\n", after_block);
+#endif
+      h = 0;
+      for (int i = 0; i < mini_block; i++) {
+        block[h] = hsum[i];
+        h++;
+      }
+      block[h] = '\0';
+      h = 0;
+      int c = gen_hash(block);
+      char s[10];
+      sprintf(s, "%02x", c);
+#ifdef DEBUG
+      printf("NEW_HASH: %s\n", s);
+#endif
+      strcpy(hsum, s);
+      strcat(hsum, after_block);
+    }
   }
   fclose(fp_in);
 
-#ifdef DEBUG
-  printf("Unmodifyed hash: %s\n", hsum);
-#endif
-
-  if (strlen(hsum) > 64) {
-    char checksum[2048];
-    checksum[0] = '\0';
-    char block[block_size+1];
-    int h = 0;
-    block[0] = '\0';
-    while (strlen(hsum) > 64) {
-#ifdef DEBUG
-      printf("looping: %ld\n", strlen(hsum));
-#endif
-      for (int i = 0; i <= strlen(hsum); i++) {
-        block[h] = hsum[i];
-        h++;
-        if (i == strlen(hsum)) {
-#ifdef DEBUG
-          printf("Extra block: %s\n", block);
-#endif
-          block[h] = '\0';
-          unsigned char bh = gen_hash(block);
-          char s[10];
-          sprintf(s, "%02x", bh);
-          strcat(checksum, s);
-
-          block[0] = '\0';
-          h = 0;
-        }
-        if (h >= block_size) {
-          block[h] = '\0';
-          unsigned char bh = gen_hash(block);
-          char s[10];
-          sprintf(s, "%02x", bh);
-          strcat(checksum, s);
-
-          block[0] = '\0';
-          h = 0;
-        }
-      }
-#ifdef DEBUG
-      printf("checksum: %s\n", checksum);
-#endif
-      strcpy(hsum, checksum);
-      block[0] = '\0';
-      h = 0;
-      checksum[0] = '\0';
-    }
-  }
-
   char* ret_hash;
-  ret_hash = (char*) malloc(256);
+  ret_hash = (char*) malloc(strlen(hsum) * sizeof(char) + 2);
 
   strcpy(ret_hash, hsum);
 

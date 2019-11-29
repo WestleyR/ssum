@@ -22,7 +22,7 @@ sudo make install
 
 ```
 $ ssum README.md
-5d11b631d7776a702735f775f42678fcadf5 README.md
+3ecdb8424e54e6e9dff4 README.md
 
 
 $ ssum README.md Makefile > foo.ssum
