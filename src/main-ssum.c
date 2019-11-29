@@ -18,7 +18,7 @@
 #include <getopt.h>
 #include <stdlib.h>
 
-#define SCRIPT_VERSION "v2.0.0-beta-12, Nov 24, 2019"
+#define SCRIPT_VERSION "v2.0.0-beta-14, Nov 24, 2019"
 
 #ifndef COMMIT_HASH
 #define COMMIT_HASH "unknown"
@@ -85,7 +85,7 @@ int gen_hash(const char *msg) {
 }
 
 char* gen_checksum_file(const char* in){
-  static const int block_size = 102;
+  static const int block_size = 100;
 
   char hsum[128];
   hsum[0] = '\0';
@@ -105,6 +105,7 @@ char* gen_checksum_file(const char* in){
   while (c != EOF) {
     c = fgetc(fp_in); 
     if (c == EOF) {
+      line[line_count] = '\0';
       int h = gen_hash(line);
       char s[10];
       sprintf(s, "%02x", h);
