@@ -1,0 +1,5 @@
+
+ [ ] Fail if trying to ssum a directory
+ [ ] add a --binary option
+ [ ] use uint_32 as checksum instead of char*
+

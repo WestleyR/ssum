@@ -14,11 +14,16 @@
 
 CC = gcc
 CFLAGS = -Wall
+
 TARGET = ssum
+LIB = libssum.1.so
 
-PREFIX = /usr/local
+# Binary prefixes
+PREFIX = $(HOME)/.local/bin
+LIB_PREFIX = $(HOME)/.lib
+INCLUDE_PREFIX = $(HOME)/.lib/include
 
-MAIN = src/main-ssum.c
+SRC = src/main-ssum.c
 
 COMMIT = "$(shell git log -1 --oneline --decorate=short --no-color || ( echo 'ERROR: unable to get commit hash' >&2 ; echo unknown ) )"
 
@@ -32,12 +37,24 @@ endif
 all: $(TARGET)
 
 .PHONY:
-$(TARGET): $(MAIN)
-	$(CC) $(CFLAGS) -o $(TARGET) $(MAIN)
-	
+$(TARGET): $(SRC)
+	$(CC) $(CFLAGS) -L$(HOME)/.lib -I$(HOME)/.lib/include -lssum.1 -o $(TARGET) $(SRC)
+
 .PHONY:
-static: $(MAIN)
-	$(CC) $(CFLAGS) -static -o $(TARGET) $(MAIN)
+install-lib: $(LIB)
+	mkdir -p $(LIB_PREFIX)
+	mkdir -p $(INCLUDE_PREFIX)
+	cp -f $(LIB) $(LIB_PREFIX)
+	cp -f lib/ssum.1.h $(INCLUDE_PREFIX)
+
+.PHONY:
+$(LIB):
+	$(CC) -c -fPIC lib/ssum.1.c -o lib/ssum.1.o
+	$(CC) -shared -o $(LIB) lib/ssum.1.o
+
+.PHONY:
+without-lib: $(SRC)
+	$(CC) $(CFLAGS) -Ilib -DWITHOUT_LIB -o $(TARGET) $(SRC) lib/ssum.1.c
 
 .PHONY:
 test: $(TARGET)
@@ -50,7 +67,7 @@ install: $(TARGET)
 
 .PHONY:
 clean:
-	 rm -f $(TARGET)
+	 rm -f $(TARGET) $(LIB) lib/ssum.1.o
 
 .PHONY:
 uninstall: $(PREFIX)/$(TARGET)
