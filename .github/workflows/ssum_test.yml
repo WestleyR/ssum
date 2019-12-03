@@ -9,7 +9,9 @@ jobs:
     
     steps:
     - uses: actions/checkout@v1
-    - name: make
+    - name: compile shared library
+      run: make install-lib
+    - name: compile ssum
       run: make
     - name: make test
       run: make test

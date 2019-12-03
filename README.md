@@ -37,9 +37,7 @@ make install
 Default prefixes:
 
 ```
-PREFIX = $(HOME)/.local/bin
-LIB_PREFIX = $(HOME)/.lib
-INCLUDE_PREFIX = $(HOME)/.lib/include
+PREFIX = ${HOME}/.local
 ```
 
 <br>
@@ -60,3 +58,56 @@ Makefile: OK
 
 <br>
 
+### Using the shared library for other projects
+
+This also comes with a shared library (`libssum.1.so`) that other projects can
+use. By default, it is installed in `~/.lib`, and the header file is in `~/.lib/include`.
+To make this accessible to your c compiler, you need to add this to your `~/.bashrc` file:
+
+```
+export CPATH=${HOME}/.local/include:${CPATH}
+export LIBRARY_PATH=${HOME}/.local/lib:${LIBRARY_PATH}
+```
+
+Then you just need to add this to your c file:
+
+```c
+#include <ssum.1.h>
+```
+
+And add this to your Makefile:
+
+```
+CFLAGS += -lssum.1
+```
+
+And remember to use `CFLAGS` after the source/object files.
+
+If you dont have your `CPATH` or `LIBRARY_PATH` set, then you can use this instead:
+_But you should really be using the env vars, but this also works._
+
+```
+LDFLAGS += -L/home/westleyk/.lib -I/home/westleyk/.lib/include
+```
+
+#### Use gpack to install/manage the library (beta)
+
+You can also use `gpack` to manage/install/update/remove the library, and
+can be installed with:
+
+```
+gpack install WestleyR/ssum-lib  # or
+gpack install WestleyR/lib-ssum
+```
+
+This will only install the ssum library to `~/.gpack/installed/*` and the
+library and header file will be symlinked to `~/.local/lib` amd `~/.local/include`.
+
+<br>
+
+### Library API/functions
+
+This library is still in beta (not released). Please see the
+`lib/ssum.1.h` file for details.
+
+<br>

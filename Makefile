@@ -18,15 +18,14 @@ CFLAGS = -Wall
 TARGET = ssum
 LIB = libssum.1.so
 
-# Binary prefixes
-PREFIX = $(HOME)/.local/bin
-LIB_PREFIX = $(HOME)/.lib
-INCLUDE_PREFIX = $(HOME)/.lib/include
+# Default prefix
+PREFIX = $(HOME)/.local
+
+LDFLAGS ?= -L$(PREFIX)/lib -I$(PREFIX)/include
 
 SRC = src/main-ssum.c
 
 COMMIT = "$(shell git log -1 --oneline --decorate=short --no-color || ( echo 'ERROR: unable to get commit hash' >&2 ; echo unknown ) )"
-
 CFLAGS += -DCOMMIT_HASH=\"$(COMMIT)\"
 
 ifeq ($(DEBUG), true)
@@ -38,14 +37,21 @@ all: $(TARGET)
 
 .PHONY:
 $(TARGET): $(SRC)
-	$(CC) $(CFLAGS) -L$(HOME)/.lib -I$(HOME)/.lib/include -lssum.1 -o $(TARGET) $(SRC)
+	$(CC) $(CFLAGS) $(SRC) $(LDFLAGS) -lssum.1 -o $(TARGET)
 
 .PHONY:
 install-lib: $(LIB)
-	mkdir -p $(LIB_PREFIX)
-	mkdir -p $(INCLUDE_PREFIX)
-	cp -f $(LIB) $(LIB_PREFIX)
-	cp -f lib/ssum.1.h $(INCLUDE_PREFIX)
+	mkdir -p $(PREFIX)/lib
+	mkdir -p $(PREFIX)/include
+	cp -f $(LIB) $(PREFIX)/lib
+	cp -f lib/ssum.1.h $(PREFIX)/include
+	@echo
+	@echo "Make sure you add this to your .bashrc: (so other projects can use this library)"
+	@echo
+	@echo "export CPATH=\$${HOME}/.local/include:\$${CPATH}"
+	@echo "export LIBRARY_PATH=\$${HOME}/.local/lib:\$${LIBRARY_PATH}"
+	@echo "export LD_LIBRARY_PATH=\$${HOME}/.lib/:\$${LD_LIBRARY_PATH}"
+	@echo
 
 .PHONY:
 $(LIB):

@@ -23,7 +23,7 @@
 #include <ssum.1.h>
 #endif
 
-#define SCRIPT_VERSION "v2.0.0-beta-16, Nov 24, 2019"
+#define SCRIPT_VERSION "v2.0.0-beta-18, Nov 24, 2019"
 
 #ifndef COMMIT_HASH
 #define COMMIT_HASH "unknown"
