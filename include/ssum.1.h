@@ -20,8 +20,10 @@
 #include <string.h>
 #include <stdlib.h>
 
+#define SSUM_LIB_VERSION "v2.0.0-beta-20, Dec 6, 2019"
+
 int gen_hash(const char *msg);
-char* gen_checksum_file(const char* in);
+int gen_checksum_file(const char* in);
 int check_checksum_file(const char* file);
 
 #endif // SSUM_H

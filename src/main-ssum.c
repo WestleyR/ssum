@@ -1,7 +1,7 @@
 // created by: WestleyR
 // email: westleyr@nym.hush.com
 // https://github.com/WestleyR/ssum
-// date: Nov 24, 2019
+// date: Dec 6, 2019
 // version-2.0.0
 //
 // The Clear BSD License
@@ -23,14 +23,14 @@
 #include <ssum.1.h>
 #endif
 
-#define SCRIPT_VERSION "v2.0.0-beta-18, Nov 24, 2019"
+#define SCRIPT_VERSION "v2.0.0-beta-20, Dec 6, 2019"
 
 #ifndef COMMIT_HASH
 #define COMMIT_HASH "unknown"
 #endif
 
 void print_version() {
-  printf("%s\n", SCRIPT_VERSION);
+  printf("lib-ssum version: %s; ssum version: %s\n", SSUM_LIB_VERSION, SCRIPT_VERSION);
 }
 
 void print_commit() {
@@ -55,11 +55,11 @@ int handle_files(const char* file, int checksum_file, int check_file) {
   int ret = 0;
 
   if (checksum_file) {
-    char* filehash = gen_checksum_file(file);
-    if (filehash == NULL) {
+    int filehash = gen_checksum_file(file);
+    if (filehash == -1) {
       return(1);
     }
-    printf("%s %s\n", filehash, file);
+    printf("%x %s\n", filehash, file);
   } else if (check_file) {
     int ecode = check_checksum_file(file);
     if (ecode != 0) {

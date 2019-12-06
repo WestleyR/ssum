@@ -44,7 +44,7 @@ install-lib: $(LIB)
 	mkdir -p $(PREFIX)/lib
 	mkdir -p $(PREFIX)/include
 	cp -f $(LIB) $(PREFIX)/lib
-	cp -f lib/ssum.1.h $(PREFIX)/include
+	cp -f include/ssum.1.h $(PREFIX)/include
 	@echo
 	@echo "Make sure you add this to your .bashrc: (so other projects can use this library)"
 	@echo
@@ -55,12 +55,12 @@ install-lib: $(LIB)
 
 .PHONY:
 $(LIB):
-	$(CC) -c -fPIC lib/ssum.1.c -o lib/ssum.1.o
+	$(CC) -c -fPIC lib/ssum.1.c -Iinclude -o lib/ssum.1.o
 	$(CC) -shared -o $(LIB) lib/ssum.1.o
 
 .PHONY:
 without-lib: $(SRC)
-	$(CC) $(CFLAGS) -Ilib -DWITHOUT_LIB -o $(TARGET) $(SRC) lib/ssum.1.c
+	$(CC) $(CFLAGS) -Iinclude -DWITHOUT_LIB -o $(TARGET) $(SRC) lib/ssum.1.c
 
 .PHONY:
 test: $(TARGET)
