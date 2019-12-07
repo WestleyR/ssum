@@ -60,7 +60,7 @@ $(LIB):
 
 .PHONY:
 without-lib: $(SRC)
-	$(CC) $(CFLAGS) -Iinclude -DWITHOUT_LIB -o $(TARGET) $(SRC) lib/ssum.1.c
+	$(CC) $(CFLAGS) $(SRC) -Iinclude -DWITHOUT_LIB -o $(TARGET) lib/ssum.1.c
 
 .PHONY:
 test: $(TARGET)

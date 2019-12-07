@@ -1,7 +1,7 @@
 // created by: WestleyR
 // email: westleyr@nym.hush.com
 // https://github.com/WestleyR/ssum
-// date: Nov 29, 2019
+// date: Dec 7, 2019
 // version-1.0.0
 //
 // The Clear BSD License
@@ -20,9 +20,9 @@
 #include <string.h>
 #include <stdlib.h>
 
-#define SSUM_LIB_VERSION "v2.0.0-beta-20, Dec 6, 2019"
+#define SSUM_LIB_VERSION "v2.0.0-beta-30, Dec 7, 2019"
 
-int gen_hash(const char *msg);
+unsigned int gen_hash(const unsigned char *message, int msg_len);
 int gen_checksum_file(const char* in);
 int check_checksum_file(const char* file);
 
