@@ -14,7 +14,7 @@
 
 #include "ssum.1.h"
 
-// Basic CRC32 hash table.
+// Basic CRC32 hash table of the popular polynomial of 0x04c11db7.
 static const unsigned int hash_index[] = {
   0x00000000, 0x04c11db7, 0x09823b6e, 0x0d4326d9, 0x130476dc,
   0x17c56b6b, 0x1a864db2, 0x1e475005, 0x2608edb8, 0x22c9f00f,
@@ -70,7 +70,9 @@ static const unsigned int hash_index[] = {
   0xb1f740b4
 };
 
-unsigned int gen_hash(const unsigned char* message, int msg_len) {
+// crc32_hash will generate a crc checksum for a *message, using the
+// specifyed msg_len; strlen(message).
+unsigned int crc32_hash(const unsigned char* message, int msg_len) {
 	// Init crc
 	unsigned int crc_hash = 0xffffffff;
 
@@ -82,28 +84,21 @@ unsigned int gen_hash(const unsigned char* message, int msg_len) {
 	return(crc_hash);
 }
 
-int gen_checksum_file(const char* in) {
+// crc32_file will take a FILE*, read it, and return a CRC32 checksum.
+unsigned int crc32_file(FILE* fp) {
   static const int block_size = 100;
-
-  FILE *fp_in;
-  fp_in = fopen(in, "rb");
-  if (fp_in == NULL) {
-    perror(in);
-    fprintf(stderr, "Unable to open file: %s\n", in);
-    return(0);
-  }
 
   int line_count = 0;
   char line[256];
   int c = 0;
 
-  int hsum = 0;
+  unsigned int hsum = 0;
 
   while (c != EOF) {
-    c = fgetc(fp_in); 
+    c = fgetc(fp); 
     if (c == EOF) {
       line[line_count] = '\0';
-      int h = gen_hash((unsigned char*)line, strlen(line));
+      int h = crc32_hash((unsigned char*)line, strlen(line));
       hsum += h;
       break;
     }
@@ -116,14 +111,13 @@ int gen_checksum_file(const char* in) {
 #ifdef DEBUG
       printf("Block: %s\n", line);
 #endif
-      int h = gen_hash((unsigned char*)line, strlen(line));
+      int h = crc32_hash((unsigned char*)line, strlen(line));
       hsum += h;
 
       line[0] = '\0';
       line_count = 0;
     }
   }
-  fclose(fp_in);
 
 #ifdef DEBUG
   printf("Int hash: %d\n", hsum);
@@ -132,33 +126,35 @@ int gen_checksum_file(const char* in) {
   return(hsum);
 }
 
-int check_checksum_file(const char* file) {
-  FILE* fp_in = fopen(file, "r");
-  if (fp_in == NULL) {
-    perror(file);
-    fprintf(stderr, "Unable to open file: %s\n", file);
-    return(1);
-  }
-
-  int success = 0;
+// check_crc32_file will take a open file, and look for a hash, and a file
+// name, eg. '1234567890 hello.txt'. Then verifies the 'hello.txt' matches
+// the hash, if not; return 1 if mismatch.
+int check_crc32_file(FILE* fp) {
+  int bad_checksum = 0;
 
   char file_line[256];
   file_line[0] = '\0';
 
-  while (fgets(file_line, sizeof(file_line), fp_in)) {
+  while (fgets(file_line, sizeof(file_line), fp)) {
     char* hash = strtok(file_line, " ");
     char* check_file = strtok(NULL, " ");
     check_file = strtok(check_file, "\n");
-    int real_checksum = gen_checksum_file(check_file);
+
+    FILE* cfile = fopen(check_file, "rb");
+    if (cfile == NULL) {
+      fprintf(stderr, "Failed to open: %s\n", check_file);
+      return(1);
+    }
+    int real_checksum = crc32_file(cfile);
+    fclose(cfile);
     if (real_checksum == -1) {
-      fprintf(stderr, "Bad checksum file: %s\n", file);
-      fclose(fp_in);
+      fprintf(stderr, "Bad checksum file: %s\n", check_file);
       return(1);
     }
     int num_hash = (int)strtol(hash, NULL, 16);
     if (real_checksum != num_hash) {
       printf("%s: FAIL: hashes differ\n", check_file);
-      success = 1;
+      bad_checksum = 1;
     } else {
       printf("%s: OK\n", check_file);
     }
@@ -168,9 +164,8 @@ int check_checksum_file(const char* file) {
     printf("Real checksum: %d\n", real_checksum);
 #endif
   }
-  fclose(fp_in);
 
-  return(success);
+  return(bad_checksum);
 }
 
 // vim: tabstop=2 shiftwidth=2 expandtab

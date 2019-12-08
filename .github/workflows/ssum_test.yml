@@ -11,6 +11,7 @@ jobs:
     - uses: actions/checkout@v1
     - name: compile shared library
       run: make install-lib
+      run: export LD_LIBRARY_PATH=${HOME}/.local/lib/:${LD_LIBRARY_PATH}
     - name: compile ssum
       run: make
     - name: make test

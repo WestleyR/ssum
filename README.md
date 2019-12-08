@@ -19,8 +19,12 @@ make install      # install ssum
 Also, make sure you have added this to your `~/.bashrc`:
 
 ```
-export LD_LIBRARY_PATH=${HOME}/.lib/:${LD_LIBRARY_PATH}
-export PATH=${PATH}:${HOME}/.local/bin/
+# For shared libraries at runtime
+export LD_LIBRARY_PATH=${HOME}/.local/lib/:${LD_LIBRARY_PATH}
+
+# For your c compiler to include the installed libraries
+export CPATH=${HOME}/.local/include:${CPATH}
+export LIBRARY_PATH=${HOME}/.local/lib:${LIBRARY_PATH}
 ```
 
 The `LD_LIBRARY_PATH` is needed because ssum creates a shared library, and that
@@ -37,7 +41,7 @@ make install
 Default prefixes:
 
 ```
-PREFIX = ${HOME}/.local
+PREFIX = $(HOME)/.local
 ```
 
 <br>
@@ -108,6 +112,6 @@ library and header file will be symlinked to `~/.local/lib` amd `~/.local/includ
 ### Library API/functions
 
 This library is still in beta (not released). Please see the
-`lib/ssum.1.h` file for details.
+`include/ssum.1.h` file for details.
 
 <br>

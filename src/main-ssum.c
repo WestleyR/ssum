@@ -1,7 +1,7 @@
 // created by: WestleyR
 // email: westleyr@nym.hush.com
 // https://github.com/WestleyR/ssum
-// date: Dec 6, 2019
+// date: Dec 7, 2019
 // version-2.0.0
 //
 // The Clear BSD License
@@ -23,7 +23,7 @@
 #include <ssum.1.h>
 #endif
 
-#define SCRIPT_VERSION "v2.0.0-beta-20, Dec 6, 2019"
+#define SCRIPT_VERSION "v2.0.0-beta-22, Dec 7, 2019"
 
 #ifndef COMMIT_HASH
 #define COMMIT_HASH "unknown"
@@ -40,7 +40,7 @@ void print_commit() {
 void print_usage(const char* name) {
   printf("Usage: %s [option] <file(s)...>\n", name);
   printf("\n");
-  printf("Compute a checksum for a ascii file(s).\n");
+  printf("Compute a CRC32 checksum for file(s).\n");
   printf("\n");
   printf("Options:\n");
   printf("  -s, --hash      generate a checksum for a file(s) (default)\n");
@@ -52,16 +52,31 @@ void print_usage(const char* name) {
 }
 
 int handle_files(const char* file, int checksum_file, int check_file) {
+  if (checksum_file == check_file) {
+    return(1);
+  }
   int ret = 0;
 
+  FILE* fp;
   if (checksum_file) {
-    int filehash = gen_checksum_file(file);
+    fp = fopen(file, "rb");
+  } else if (check_file) {
+    fp = fopen(file, "rb");
+  }
+
+  if (fp == NULL) {
+    fprintf(stderr, "Failed to open: %s\n", file);
+    return(1);
+  }
+
+  if (checksum_file) {
+    int filehash = crc32_file(fp);
     if (filehash == -1) {
       return(1);
     }
     printf("%x %s\n", filehash, file);
   } else if (check_file) {
-    int ecode = check_checksum_file(file);
+    int ecode = check_crc32_file(fp);
     if (ecode != 0) {
       ret = 1;
     }
