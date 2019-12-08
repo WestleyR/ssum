@@ -1,8 +1,8 @@
 # Created by: WestleyR
 # email: westleyr@nym.hush.com
-# Date: Nov 23, 2019
+# Date: Dec 7, 2019
 # https://github.com/WestleyR/ssum
-# Version-1.0.1
+# Version-1.0.2
 #
 # The Clear BSD License
 #
@@ -48,9 +48,9 @@ install-lib: $(LIB)
 	@echo
 	@echo "Make sure you add this to your .bashrc: (so other projects can use this library)"
 	@echo
+	@echo "export LD_LIBRARY_PATH=\$${HOME}/local/.lib/:\$${LD_LIBRARY_PATH}"
 	@echo "export CPATH=\$${HOME}/.local/include:\$${CPATH}"
 	@echo "export LIBRARY_PATH=\$${HOME}/.local/lib:\$${LIBRARY_PATH}"
-	@echo "export LD_LIBRARY_PATH=\$${HOME}/.lib/:\$${LD_LIBRARY_PATH}"
 	@echo
 
 .PHONY:
