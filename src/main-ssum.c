@@ -23,14 +23,14 @@
 #include <ssum.1.h>
 #endif
 
-#define SCRIPT_VERSION "v2.0.0-beta-22, Dec 7, 2019"
+#define SCRIPT_VERSION "v2.0.0-beta-24, Dec 7, 2019"
 
 #ifndef COMMIT_HASH
 #define COMMIT_HASH "unknown"
 #endif
 
 void print_version() {
-  printf("lib-ssum version: %s; ssum version: %s\n", SSUM_LIB_VERSION, SCRIPT_VERSION);
+  printf("lib-ssum version: %s; ssum version: %s\n", libssum_version(), SCRIPT_VERSION);
 }
 
 void print_commit() {
@@ -43,11 +43,12 @@ void print_usage(const char* name) {
   printf("Compute a CRC32 checksum for file(s).\n");
   printf("\n");
   printf("Options:\n");
-  printf("  -s, --hash      generate a checksum for a file(s) (default)\n");
-  printf("  -c, --check     check a files checksum\n");
-  printf("  -h, --help      print help menu\n");
-  printf("  -C, --commit    print the github commit hash\n");
-  printf("  -V, --version   print version\n");
+  printf("  -s, --hash              generate a checksum for a file(s) (default)\n");
+  printf("  -c, --check             check a files checksum from a .ssum file\n");
+  printf("  -H, --file-hash <hash>  check a file with the specifyed hash\n");
+  printf("  -h, --help              print help menu\n");
+  printf("  -C, --commit            print the github commit hash\n");
+  printf("  -V, --version           print version\n");
   printf("\n");
 }
 
@@ -74,7 +75,7 @@ int handle_files(const char* file, int checksum_file, int check_file) {
     if (filehash == -1) {
       return(1);
     }
-    printf("%x %s\n", filehash, file);
+    printf("%08x %s\n", filehash, file);
   } else if (check_file) {
     int ecode = check_crc32_file(fp);
     if (ecode != 0) {
@@ -91,16 +92,20 @@ int main(int argc, char** argv) {
   int checksum_file = 1;
   int check_file = 0;
 
+  int check_file_hash = 0;
+  char* checkfile_hash;
+
   static struct option long_options[] = {
     {"hash", no_argument, 0, 's'},
     {"check", no_argument, 0, 'c'},
+    {"file-hash", required_argument, 0, 'H'},
     {"help", no_argument, 0, 'h'},
     {"version", no_argument, 0, 'V'},
     {"commit", no_argument, 0, 'C'},
     {NULL, 0, 0, 0}
   };
 
-  while ((opt = getopt_long(argc, argv, "schCV", long_options, 0)) != -1) {
+  while ((opt = getopt_long(argc, argv, "H:schCV", long_options, 0)) != -1) {
     switch (opt) {
       case 's':
         checksum_file = 1;
@@ -108,6 +113,17 @@ int main(int argc, char** argv) {
 
       case 'c':
         check_file = 1;
+        checksum_file = 0;
+        break;
+
+      case 'H':
+        checkfile_hash = (char*) malloc(36*sizeof(char));
+        if (checkfile_hash == NULL) {
+          perror("malloc");
+          return(1);
+        }
+        checkfile_hash = optarg;
+        check_file_hash = 1;
         checksum_file = 0;
         break;
 
@@ -131,6 +147,45 @@ int main(int argc, char** argv) {
   if (checksum_file && check_file) {
     fprintf(stderr, "Only one action allowed\n");
     return(22);
+  }
+
+  if (check_file_hash) {
+    int num_hash = (int)strtol(checkfile_hash, NULL, 16);
+    if (optind < argc) {
+      if (argc - optind > 1) {
+        fprintf(stderr, "Invallid file(s)\n");
+        return(1);
+      }
+      FILE* fp = fopen(argv[optind], "rb");
+      if (fp == NULL) {
+        fprintf(stderr, "%s: %s: No such file\n", argv[0], argv[optind]);
+        return(1);
+      }
+      int file_checksum = crc32_file(fp);
+      fclose(fp);
+      if (file_checksum == -1) {
+        fprintf(stderr, "Failed to gen hash\n");
+        return(1);
+      }
+
+#ifdef DEBUG
+      printf("HASH: %s\n", checkfile_hash);
+      printf("hash: %x\n", file_checksum);
+      printf("FILE: %s\n", argv[optind]);
+#endif
+      if (num_hash != file_checksum) {
+        printf("%s: Hashes differ\n", argv[optind]);
+        return(1);
+      } else {
+        printf("%s: OK\n", argv[optind]);
+        return(0);
+      }
+    } else {
+      fprintf(stderr, "No files, nothing to do...\n");
+      return(123);
+    }
+
+    return(0);
   }
 
   int exit_code = 0;

@@ -2,7 +2,7 @@
 // email: westleyr@nym.hush.com
 // https://github.com/WestleyR/ssum
 // date: Dec 7, 2019
-// version-2.0.0
+// version-2.0.1
 //
 // The Clear BSD License
 //
@@ -70,6 +70,10 @@ static const unsigned int hash_index[] = {
   0xb1f740b4
 };
 
+const char* libssum_version() {
+  return("v2.0.0-beta-32, Dec 7, 2019");
+}
+
 // crc32_hash will generate a crc checksum for a *message, using the
 // specifyed msg_len; strlen(message).
 unsigned int crc32_hash(const unsigned char* message, int msg_len) {
@@ -130,7 +134,7 @@ unsigned int crc32_file(FILE* fp) {
 // name, eg. '1234567890 hello.txt'. Then verifies the 'hello.txt' matches
 // the hash, if not; return 1 if mismatch.
 int check_crc32_file(FILE* fp) {
-  int bad_checksum = 0;
+  int checksumOK = 0;
 
   char file_line[256];
   file_line[0] = '\0';
@@ -154,7 +158,7 @@ int check_crc32_file(FILE* fp) {
     int num_hash = (int)strtol(hash, NULL, 16);
     if (real_checksum != num_hash) {
       printf("%s: FAIL: hashes differ\n", check_file);
-      bad_checksum = 1;
+      checksumOK = 1;
     } else {
       printf("%s: OK\n", check_file);
     }
@@ -165,7 +169,7 @@ int check_crc32_file(FILE* fp) {
 #endif
   }
 
-  return(bad_checksum);
+  return(checksumOK);
 }
 
 // vim: tabstop=2 shiftwidth=2 expandtab

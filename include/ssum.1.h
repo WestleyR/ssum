@@ -2,7 +2,7 @@
 // email: westleyr@nym.hush.com
 // https://github.com/WestleyR/ssum
 // date: Dec 7, 2019
-// version-1.0.0
+// version-1.0.1
 //
 // The Clear BSD License
 //
@@ -16,12 +16,10 @@
 #define SSUM_H
 
 #include <stdio.h>
-#include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
 
-#define SSUM_LIB_VERSION "v2.0.0-beta-32, Dec 7, 2019"
-
+const char* libssum_version();
 unsigned int crc32_hash(const unsigned char *message, int msg_len);
 unsigned int crc32_file(FILE* fp);
 int check_crc32_file(FILE* fp);
