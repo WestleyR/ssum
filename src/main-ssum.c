@@ -1,7 +1,7 @@
 // created by: WestleyR
 // email: westleyr@nym.hush.com
 // https://github.com/WestleyR/ssum
-// date: Dec 7, 2019
+// date: Dec 15, 2019
 // version-2.0.0
 //
 // The Clear BSD License
@@ -23,7 +23,7 @@
 #include <ssum.1.h>
 #endif
 
-#define SCRIPT_VERSION "v2.0.0-beta-24, Dec 7, 2019"
+#define SCRIPT_VERSION "v2.0.0, Dec 15, 2019"
 
 #ifndef COMMIT_HASH
 #define COMMIT_HASH "unknown"

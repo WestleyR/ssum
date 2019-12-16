@@ -1,7 +1,7 @@
 // created by: WestleyR
 // email: westleyr@nym.hush.com
 // https://github.com/WestleyR/ssum
-// date: Dec 7, 2019
+// date: Dec 15, 2019
 // version-2.0.1
 //
 // The Clear BSD License
@@ -71,7 +71,7 @@ static const unsigned int hash_index[] = {
 };
 
 const char* libssum_version() {
-  return("v2.0.0-beta-32, Dec 7, 2019");
+  return("v2.0.0, Dec 15, 2019");
 }
 
 // crc32_hash will generate a crc checksum for a *message, using the
