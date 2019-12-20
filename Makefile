@@ -2,7 +2,7 @@
 # email: westleyr@nym.hush.com
 # Date: Dec 20, 2019
 # https://github.com/WestleyR/ssum
-# Version-1.1.0
+# Version-1.1.1
 #
 # The Clear BSD License
 #
@@ -34,6 +34,16 @@ COMMIT_FLAG = -DCOMMIT_HASH=\"$(COMMIT)\"
 ifeq ($(DEBUG), true)
 	CFLAGS += -DDEBUG
 endif
+
+LDFLAGS = 
+
+ifeq ($(CPATH),)
+	LDFLAGS += -I$(PREFIX)/include
+endif
+ifeq ($(LIBRARY_PATH),)
+	LDFLAGS += -L$(PREFIX)/lib
+endif
+
 
 .PHONY:
 all: $(TARGET)
