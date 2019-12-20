@@ -28,8 +28,8 @@ export LIBRARY_PATH=${HOME}/.local/lib:${LIBRARY_PATH}
 ```
 
 The `LD_LIBRARY_PATH` is needed because ssum creates a shared library, and that
-is linked to the ssum command. And the `PATH` is so you dont need `sudo` to
-install it.
+is linked to the ssum command. And the `PATH` is so you can install without
+`sudo`.
 
 Alternatively you can compile ssum without the shared library:
 
@@ -44,13 +44,16 @@ Default prefixes:
 PREFIX = $(HOME)/.local
 ```
 
+This can be changed by passing `PREFIX=/some/prefix` to the Makefile when
+installing.
+
 <br>
 
 ## Example
 
 ```
 $ ssum README.md
-3ecdb8424e54e6e9dff4 README.md
+5cf6f79a README.md
 
 
 $ ssum README.md Makefile > foo.ssum
@@ -65,8 +68,9 @@ Makefile: OK
 ### Using the shared library for other projects
 
 This also comes with a shared library (`libssum.1.so`) that other projects can
-use. By default, it is installed in `~/.lib`, and the header file is in `~/.lib/include`.
-To make this accessible to your c compiler, you need to add this to your `~/.bashrc` file:
+use. By default, it is installed in `~/.local/lib`, and the header file is in
+`~/.local/include`. To make this accessible to your c compiler, you need to add
+this to your `~/.bashrc` file:
 
 ```
 export CPATH=${HOME}/.local/include:${CPATH}
@@ -88,7 +92,7 @@ CFLAGS += -lssum.1
 And remember to use `CFLAGS` after the source/object files.
 
 If you dont have your `CPATH` or `LIBRARY_PATH` set, then you can use this instead:
-_But you should really be using the env vars, but this also works._
+_You should really be using the env vars, but this also works._
 
 ```
 LDFLAGS += -L/home/westleyk/.lib -I/home/westleyk/.lib/include
@@ -96,16 +100,23 @@ LDFLAGS += -L/home/westleyk/.lib -I/home/westleyk/.lib/include
 
 #### Use gpack to install/manage the library (beta)
 
-You can also use `gpack` to manage/install/update/remove the library, and
+You can also use [gpack](https://github.com/WestleyR/gpack) to manage/install/update/remove the library, and
 can be installed with:
 
 ```
-gpack install WestleyR/ssum-lib  # or
 gpack install WestleyR/lib-ssum
 ```
 
 This will only install the ssum library to `~/.gpack/installed/*` and the
-library and header file will be symlinked to `~/.local/lib` amd `~/.local/include`.
+library and header file will be symlinked to `~/.local/lib` and
+`~/.local/include`. You can also install the ssum command and library with
+gpack:
+
+```
+gpack install WestleyR/ssum
+```
+
+_lib-ssum will be installed if not already, since lib-ssum is needed for ssum._
 
 <br>
 

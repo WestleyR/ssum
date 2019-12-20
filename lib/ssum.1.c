@@ -1,8 +1,8 @@
 // created by: WestleyR
 // email: westleyr@nym.hush.com
 // https://github.com/WestleyR/ssum
-// date: Dec 7, 2019
-// version-2.0.1
+// date: Dec 19, 2019
+// version-3.0.0
 //
 // The Clear BSD License
 //
@@ -13,6 +13,10 @@
 //
 
 #include "ssum.1.h"
+
+#ifndef SSUM_BLOCK_SIZE
+#define SSUM_BLOCK_SIZE 20
+#endif
 
 // Basic CRC32 hash table of the popular polynomial of 0x04c11db7.
 static const unsigned int hash_index[] = {
@@ -71,27 +75,25 @@ static const unsigned int hash_index[] = {
 };
 
 const char* libssum_version() {
-  return("v2.0.0-beta-32, Dec 7, 2019");
+  return("v3.0.0-beta-1, Dec 19, 2019");
 }
 
 // crc32_hash will generate a crc checksum for a *message, using the
 // specifyed msg_len; strlen(message).
 unsigned int crc32_hash(const unsigned char* message, int msg_len) {
-	// Init crc
-	unsigned int crc_hash = 0xffffffff;
+  // Init crc
+  unsigned int crc_hash = 0xffffffff;
 
-	while ((msg_len--) > 0) {
-		crc_hash = (crc_hash << 8) ^ hash_index[((crc_hash >> 24) ^ *message) & 255];
-		message++;
-	}
+  while ((msg_len--) > 0) {
+    crc_hash = (crc_hash << 8) ^ hash_index[((crc_hash >> 24) ^ *message) & 255];
+    message++;
+  }
 
-	return(crc_hash);
+  return(crc_hash);
 }
 
 // crc32_file will take a FILE*, read it, and return a CRC32 checksum.
 unsigned int crc32_file(FILE* fp) {
-  static const int block_size = 100;
-
   int line_count = 0;
   char line[256];
   int c = 0;
@@ -110,7 +112,7 @@ unsigned int crc32_file(FILE* fp) {
     line[line_count] = c;
     line_count++;
 
-    if (line_count >= block_size) {
+    if (line_count >= SSUM_BLOCK_SIZE) {
       line[line_count] = '\0';
 #ifdef DEBUG
       printf("Block: %s\n", line);
