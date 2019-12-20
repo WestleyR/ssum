@@ -14,10 +14,6 @@
 
 #include "ssum.1.h"
 
-#ifndef SSUM_BLOCK_SIZE
-#define SSUM_BLOCK_SIZE 20
-#endif
-
 // Basic CRC32 hash table of the popular polynomial of 0x04c11db7.
 static const unsigned int hash_index[] = {
   0x00000000, 0x04c11db7, 0x09823b6e, 0x0d4326d9, 0x130476dc,

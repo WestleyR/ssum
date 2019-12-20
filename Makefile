@@ -1,8 +1,8 @@
 # Created by: WestleyR
 # email: westleyr@nym.hush.com
-# Date: Dec 7, 2019
+# Date: Dec 20, 2019
 # https://github.com/WestleyR/ssum
-# Version-1.0.2
+# Version-1.1.0
 #
 # The Clear BSD License
 #
@@ -21,12 +21,15 @@ LIB = libssum.1.so
 # Default prefix
 PREFIX = $(HOME)/.local
 
-LDFLAGS ?= -L$(PREFIX)/lib -I$(PREFIX)/include
+SRC = $(wildcard src/*.c)
+LIB_SRC = $(wildcard lib/*.c)
 
-SRC = src/main-ssum.c
+OBJS = $(SRC:.c=.o)
+
+LIB_OBJS = $(LIB_SRC:.c=.o)
 
 COMMIT = "$(shell git log -1 --oneline --decorate=short --no-color || ( echo 'ERROR: unable to get commit hash' >&2 ; echo unknown ) )"
-CFLAGS += -DCOMMIT_HASH=\"$(COMMIT)\"
+COMMIT_FLAG = -DCOMMIT_HASH=\"$(COMMIT)\"
 
 ifeq ($(DEBUG), true)
 	CFLAGS += -DDEBUG
@@ -37,13 +40,13 @@ all: $(TARGET)
 
 .PHONY:
 $(TARGET): $(SRC)
-	$(CC) $(CFLAGS) $(SRC) $(LDFLAGS) -lssum.1 -o $(TARGET)
+	$(CC) $(CFLAGS) src/main-ssum.c -lssum.1 -o $(TARGET) $(LDFLAGS)
 
 .PHONY:
 install-lib: $(LIB)
 	mkdir -p $(PREFIX)/lib
 	mkdir -p $(PREFIX)/include
-	cp -f $(LIB) $(PREFIX)/lib
+	cp -f lib/$(LIB) $(PREFIX)/lib
 	cp -f include/ssum.1.h $(PREFIX)/include
 	@echo
 	@echo "Make sure you add this to your .bashrc: (so other projects can use this library)"
@@ -55,12 +58,19 @@ install-lib: $(LIB)
 
 .PHONY:
 $(LIB):
-	$(CC) -c -fPIC lib/ssum.1.c -Iinclude -o lib/ssum.1.o
-	$(CC) -shared -o $(LIB) lib/ssum.1.o
+	$(MAKE) -C ./lib shared-library
 
 .PHONY:
-without-lib: $(SRC)
-	$(CC) $(CFLAGS) $(SRC) -Iinclude -DWITHOUT_LIB -o $(TARGET) lib/ssum.1.c
+$(LIB_OBJS):
+	$(MAKE) -C ./lib objs
+
+.PHONY:
+without-lib: $(OBJS) $(LIB_OBJS)
+	$(CC) $(CFLAGS) $(OBJS) $(LIB_OBJS) -DWITHOUT_LIB -o $(TARGET) $(LDFLAGS)
+
+.PHONY:
+%.o: %.c
+	$(CC) $(CFLAGS) $(COMMIT_FLAG) -I./include -o $@ -c $< $(LDFLAGS)
 
 .PHONY:
 test: $(TARGET)
@@ -73,7 +83,8 @@ install: $(TARGET)
 
 .PHONY:
 clean:
-	 rm -f $(TARGET) $(LIB) lib/ssum.1.o
+	 rm -f $(TARGET) $(OBJS)
+	 make -C ./lib clean
 
 .PHONY:
 uninstall: $(PREFIX)/$(TARGET)

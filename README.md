@@ -31,7 +31,7 @@ The `LD_LIBRARY_PATH` is needed because ssum creates a shared library, and that
 is linked to the ssum command. And the `PATH` is so you can install without
 `sudo`.
 
-Alternatively you can compile ssum without the shared library:
+Alternatively you can compile ssum without any shared library:
 
 ```
 make without-lib
@@ -122,7 +122,52 @@ _lib-ssum will be installed if not already, since lib-ssum is needed for ssum._
 
 ### Library API/functions
 
-This library is still in beta (not released). Please see the
-`include/ssum.1.h` file for details.
+This documentation may be outdated. Please see the `include/ssum.1.h` file for more details.
+
+### `const char* libssum_version();`
+
+
+#### Parameters
+
+Non.
+
+#### Returns
+
+The libssum version, like `v3.0.0, Dec 19, 2019`.
+
+
+### `unsigned int crc32_hash(const unsigned char *message, int msg_len);`
+
+#### Parameters
+
+`message` is a string. `msg_len` is the length of the message/string.
+
+#### Returns
+
+The crc for the given `message`.
+
+
+### `unsigned int crc32_file(FILE* fp);`
+
+#### Parameters
+
+`fp` is the open file to read from, read it as a binary file (`"rb"`).
+
+#### Returns
+
+The crc for the contents of the file.
+
+
+### `int check_crc32_file(FILE* fp);`
+
+#### Parameters
+
+`fp` is the open file that contains the hash for a file. Open the file in read
+mode, and non-binary (`"r"`).
+
+#### Returns
+
+Returns `0` (zero) if the checksum and file match. Returns `1` if it does not.
+And `-1` if theres a other error.
 
 <br>
