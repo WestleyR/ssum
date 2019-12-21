@@ -1,10 +1,10 @@
 
- - [ ] Fail if trying to ssum a directory
+ - [x] Fail if trying to ssum a directory
  - [x] use consistent spacing for checksum
  - [ ] stdin support
  - [x] use int as checksum instead of char*
  - [ ] Dont use/create a shared library by default
  - [ ] Support for clib to install the library files
- - [ ] Maybe use rpath if LD_LIBRARY_PATH is not set?
+ - [x] Use rpath if option permits
  - [x] Use a configure script
 

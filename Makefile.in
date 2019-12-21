@@ -45,7 +45,7 @@ $(LIB_OBJS):
 
 .PHONY:
 without-lib: $(OBJS) $(LIB_OBJS)
-	$(CC) $(CFLAGS) $(OBJS) $(LIB_OBJS) -DWITHOUT_LIB -o $(TARGET) $(LDFLAGS)
+	$(CC) $(CFLAGS) $(OBJS) $(LIB_OBJS) -o $(TARGET) $(LDFLAGS)
 
 .PHONY:
 %.o: %.c

@@ -1,7 +1,7 @@
 // created by: WestleyR
 // email: westleyr@nym.hush.com
 // https://github.com/WestleyR/ssum
-// date: Dec 15, 2019
+// date: Dec 21, 2019
 // version-2.0.0
 //
 // The Clear BSD License
@@ -16,6 +16,9 @@
 #include <string.h>
 #include <getopt.h>
 #include <stdlib.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 #ifdef WITHOUT_LIB
 #include "ssum.1.h"
@@ -23,7 +26,7 @@
 #include <ssum.1.h>
 #endif
 
-#define SCRIPT_VERSION "v2.0.0, Dec 15, 2019"
+#define SCRIPT_VERSION "v2.0.1, Dec 21, 2019"
 
 #ifndef COMMIT_HASH
 #define COMMIT_HASH "unknown"
@@ -57,6 +60,13 @@ int handle_files(const char* file, int checksum_file, int check_file) {
     return(1);
   }
   int ret = 0;
+
+  struct stat st;
+  stat(file, &st);
+  if (!S_ISREG(st.st_mode)) {
+    fprintf(stderr, "%s: Is not a regular file\n", file);
+    return(1);
+  }
 
   FILE* fp;
   if (checksum_file) {
