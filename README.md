@@ -45,8 +45,8 @@ Default prefixes:
 PREFIX = $(HOME)/.local
 ```
 
-This can be changed by passing `PREFIX=/some/prefix` to the Makefile when
-installing.
+This can be changed by passing `--prefix /some/prefix` to the `configure`
+script.
 
 <br>
 
@@ -57,11 +57,11 @@ $ ssum README.md
 5cf6f79a README.md
 
 
-$ ssum README.md Makefile > foo.ssum
+$ ssum README.md configure > foo.ssum
 
 $ ssum -c foo.ssum
 README.md: OK
-Makefile: OK
+configure: OK
 ```
 
 <br>

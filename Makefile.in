@@ -16,21 +16,6 @@ ifeq ($(DEBUG), true)
 	CFLAGS += -DDEBUG
 endif
 
-LDFLAGS = 
-
-ifeq ($(RPATH), true)
-	LDFLAGS += -Wl,-rpath=$(PREFIX)/lib
-endif
-ifeq ($(CPATH),)
-	LDFLAGS += -I$(PREFIX)/include
-endif
-ifeq ($(LIBRARY_PATH),)
-	LDFLAGS += -L$(PREFIX)/lib
-endif
-
-.PHONY:
-all: $(TARGET)
-
 .PHONY:
 $(TARGET): $(SRC)
 	$(CC) $(CFLAGS) src/main-ssum.c -lssum.1 -o $(TARGET) $(LDFLAGS)

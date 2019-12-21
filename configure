@@ -3,7 +3,7 @@
 # email: westleyr@nym.hush.com
 # Date: Dec 20, 2019
 # https://github.com/WestleyR/ssum
-# Version-1.0.0
+# Version-1.0.1
 #
 # The Clear BSD License
 #
@@ -16,6 +16,7 @@
 set -e
 
 # Default settings
+target="ssum"
 prefix="${HOME}/.local"
 cc="gcc"
 option_rpath=0
@@ -30,6 +31,7 @@ print_usage() {
   echo "  -p, --prefix /path/to/install  specify a prefix to install"
   echo "  --use-rpath                    use rpath when linking library"
   echo "  --without-library              dont install/use the shared library"
+  echo "  --compiler <c-compiler>        used a specifyed c compiler"
   echo ""
   exit 0
 }
@@ -39,10 +41,19 @@ while [[ $# -gt 0 ]]; do
   case $option in
     -p|--prefix)
       if [ -z $2 ]; then
-        echo "prefix flag but no value"
+        echo "--prefix flag but no value"
         exit 1
       fi
       prefix="$2"
+      shift
+      shift
+      ;;
+    --compiler)
+      if [ -z $2 ]; then
+        echo "--compiler flag but no value"
+        exit 1
+      fi
+      cc="$2"
       shift
       shift
       ;;
@@ -67,14 +78,6 @@ done
 
 echo "Prefix=${prefix}"
 
-if [[ $option_rpath -eq 1 ]]; then
-  echo "Using rpath"
-fi
-
-if [[ $option_without_library -eq 1 ]]; then
-  echo "Not using library"
-fi
-
 echo "Building Makefile..."
 
 cat << EOF > Makefile
@@ -82,7 +85,7 @@ cat << EOF > Makefile
 # email: westleyr@nym.hush.com
 # Date: Dec 20, 2019
 # https://github.com/WestleyR/ssum
-# Version-2.0.0
+# Version-2.0.1
 #
 # The Clear BSD License
 #
@@ -107,7 +110,33 @@ LIB = libssum.1.so
 # Default prefix
 PREFIX = ${prefix}
 
+LDFLAGS = 
+
 EOF
+
+if [[ $option_rpath -eq 1 ]]; then
+  echo "Using rpath"
+	echo "LDFLAGS += -Wl,-rpath=${prefix}/lib" >> Makefile
+fi
+
+if [ -z ${CPATH} ]; then
+	echo "LDFLAGS += -I${prefix}/include" >> Makefile
+fi
+
+if [ -z ${LIBRARY_PATH} ]; then
+	echo "LDFLAGS += -L${prefix}/lib" >> Makefile
+fi
+
+if [[ $option_without_library -eq 1 ]]; then
+  echo "Not using library"
+  echo ".PHONY:" >> Makefile
+  echo "all: without-lib" >> Makefile
+else
+  echo ".PHONY:" >> Makefile
+  echo "all: ${target}" >> Makefile
+fi
+
+echo "" >> Makefile
 
 cat Makefile.in >> Makefile
 
