@@ -35,7 +35,8 @@ is linked to the ssum command. And the `PATH` is so you can install without
 Alternatively you can compile ssum without any shared library:
 
 ```
-make without-lib
+./configure --without-library
+make
 make install
 ```
 
