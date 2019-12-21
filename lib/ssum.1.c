@@ -1,7 +1,7 @@
 // created by: WestleyR
 // email: westleyr@nym.hush.com
 // https://github.com/WestleyR/ssum
-// date: Dec 19, 2019
+// date: Dec 21, 2019
 // version-3.0.0
 //
 // The Clear BSD License
@@ -89,10 +89,18 @@ unsigned int crc32_hash(const unsigned char* message, int msg_len) {
 }
 
 // crc32_file will take a FILE*, read it, and return a CRC32 checksum.
-unsigned int crc32_file(FILE* fp) {
+unsigned int crc32_file(FILE* fp, int block_size) {
   int line_count = 0;
   char line[256];
   int c = 0;
+
+  int ssum_block_size;
+
+  if (block_size == -1 || block_size == 0) {
+    ssum_block_size = SSUM_BLOCK_SIZE;
+  } else {
+    ssum_block_size = block_size;
+  }
 
   unsigned int hsum = 0;
 
@@ -108,7 +116,7 @@ unsigned int crc32_file(FILE* fp) {
     line[line_count] = c;
     line_count++;
 
-    if (line_count >= SSUM_BLOCK_SIZE) {
+    if (line_count >= ssum_block_size) {
       line[line_count] = '\0';
 #ifdef DEBUG
       printf("Block: %s\n", line);
@@ -131,8 +139,16 @@ unsigned int crc32_file(FILE* fp) {
 // check_crc32_file will take a open file, and look for a hash, and a file
 // name, eg. '1234567890 hello.txt'. Then verifies the 'hello.txt' matches
 // the hash, if not; return 1 if mismatch.
-int check_crc32_file(FILE* fp) {
+int check_crc32_file(FILE* fp, int block_size) {
   int checksumOK = 0;
+
+  int ssum_block_size;
+
+  if (block_size == -1 || block_size == 0) {
+    ssum_block_size = SSUM_BLOCK_SIZE;
+  } else {
+    ssum_block_size = block_size;
+  }
 
   char file_line[256];
   file_line[0] = '\0';
@@ -147,7 +163,7 @@ int check_crc32_file(FILE* fp) {
       fprintf(stderr, "Failed to open: %s\n", check_file);
       return(1);
     }
-    int real_checksum = crc32_file(cfile);
+    int real_checksum = crc32_file(cfile, ssum_block_size);
     fclose(cfile);
     if (real_checksum == -1) {
       fprintf(stderr, "Bad checksum file: %s\n", check_file);

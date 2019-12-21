@@ -1,7 +1,7 @@
 // created by: WestleyR
 // email: westleyr@nym.hush.com
 // https://github.com/WestleyR/ssum
-// date: Dec 20, 2019
+// date: Dec 21, 2019
 // version: na; see ssum.1.c
 //
 // The Clear BSD License
@@ -14,7 +14,7 @@
 
 #ifndef INCLUDE_SSUM_H
 #define INCLUDE_SSUM_H
-#define SSUM_HEADERFILE_VERSION "v1.0.0, Dec 20, 2019"
+#define SSUM_HEADERFILE_VERSION "v1.1.0, Dec 21, 2019"
 
 #include <stdio.h>
 #include <string.h>
@@ -31,8 +31,6 @@
 #ifndef SSUM_BLOCK_SIZE
 #define SSUM_BLOCK_SIZE 20
 #endif
-//
-// default: 20
 //
 // This is the block size when reading from a file.
 //
@@ -62,21 +60,22 @@ unsigned int crc32_hash(const unsigned char *message, int msg_len);
 // The crc for the given `message`.
 //
 
-unsigned int crc32_file(FILE* fp);
+unsigned int crc32_file(FILE* fp, int block_size);
 // ### Parameters
 // 
 // `fp` is the open file to read from, read it as a binary file (`"rb"`).
+// `block_size` is the size of the block to read.
 // 
 // ### Returns
 // 
 // The crc for the contents of the file.
 //
 
-int check_crc32_file(FILE* fp);
+int check_crc32_file(FILE* fp, int block_size);
 // ### Parameters
 // 
 // `fp` is the open file that contains the hash for a file. Open the file in read
-// mode, and non-binary (`"r"`).
+// mode, and non-binary (`"r"`). `block_size` is the size of the block to read.
 // 
 // ### Returns
 // 

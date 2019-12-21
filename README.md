@@ -128,7 +128,6 @@ This documentation may be outdated. Please see the `include/ssum.1.h` file for m
 
 ### `const char* libssum_version();`
 
-
 #### Parameters
 
 Non.
