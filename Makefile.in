@@ -75,9 +75,9 @@ gpack-package: clean $(LIB) without-lib
 	mkdir -p ./gpack-package/$(TARGET)/$(TARGET_VERSION)/bin
 	cp -f $(TARGET) ./gpack-package/$(TARGET)/$(TARGET_VERSION)/bin
 	
-	# TODO: fix arch in configure
-	tar -czf ./gpack-package/$(TARGET)-v$(TARGET_VERSION)-x86_64_linux.tar.gz ./gpack-package/$(TARGET)
-	sha256sum ./gpack-package/$(TARGET)-v$(TARGET_VERSION)-x86_64_linux.tar.gz
+	tar -czf ./gpack-package/$(TARGET)-v$(TARGET_VERSION)-$(PKG_ARCH).tar.gz ./gpack-package/$(TARGET)
+	@echo "sha256sum for package:"
+	@sha256sum ./gpack-package/$(TARGET)-v$(TARGET_VERSION)-$(PKG_ARCH).tar.gz
 
 .PHONY:
 uninstall: $(PREFIX)/bin/$(TARGET)

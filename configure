@@ -3,7 +3,7 @@
 # email: westleyr@nym.hush.com
 # Date: Dec 21, 2019
 # https://github.com/WestleyR/ssum
-# Version-1.0.2
+# Version-1.0.3
 #
 # The Clear BSD License
 #
@@ -85,9 +85,9 @@ echo "Building Makefile..."
 cat << EOF > Makefile
 # Created by: WestleyR
 # email: westleyr@nym.hush.com
-# Date: Dec 20, 2019
+# Date: Dec 21, 2019
 # https://github.com/WestleyR/ssum
-# Version-2.0.2
+# Version-2.0.3
 #
 # The Clear BSD License
 #
@@ -120,18 +120,35 @@ PREFIX = ${prefix}
 
 EOF
 
+if [ -z $GPACK_ARCH ]; then
+  echo "\$GPACK_ARCH not set, cant make gpack package"
+else
+  if [[ "${GPACK_ARCH}" = "X86_64_LINUX" ]]; then
+    echo "PKG_ARCH = x86_64_linux" >> Makefile
+  elif [[ "${GPACK_ARCH}" = "MACOS" ]]; then
+    echo "PKG_ARCH = macos" >> Makefile
+  elif [[ "${GPACK_ARCH}" = "ARMV6L" ]]; then
+    echo "PKG_ARCH = armv6l" >> Makefile
+  elif [[ "${GPACK_ARCH}" = "ARMV7L" ]]; then
+    echo "PKG_ARCH = armv7l" >> Makefile
+  else
+    echo "Unknown gpack arch. Please update this repo, or open a issue at https://github.com/WestleyR/ssum"
+    echo "PKG_ARCH = unknown" >> Makefile
+  fi
+fi
+
 if [[ $option_rpath -eq 1 ]]; then
   echo "Using rpath"
-	echo "LDFLAGS += -Wl,-rpath=${prefix}/lib" >> Makefile
+  echo "LDFLAGS += -Wl,-rpath=${prefix}/lib" >> Makefile
 fi
 
 if [[ $option_without_library -eq 0 ]]; then
   if [ -z ${CPATH} ]; then
-  	echo "LDFLAGS += -I${prefix}/include" >> Makefile
+    echo "LDFLAGS += -I${prefix}/include" >> Makefile
   fi
-  
+
   if [ -z ${LIBRARY_PATH} ]; then
-  	echo "LDFLAGS += -L${prefix}/lib" >> Makefile
+    echo "LDFLAGS += -L${prefix}/lib" >> Makefile
   fi
 fi
 
