@@ -17,6 +17,8 @@ set -e
 
 # Default settings
 target="ssum"
+target_version="3.0.0"
+
 prefix="${HOME}/.local"
 cc="gcc"
 option_rpath=0
@@ -104,13 +106,18 @@ cat << EOF > Makefile
 CC = ${cc}
 CFLAGS = -Wall
 
-TARGET = ssum
+TARGET = ${target}
+TARGET_VERSION = ${target_version}
+
+DEFINE_FLAGS = 
+LDFLAGS = 
+
+DEFINE_FLAGS += -DMAIN_VERSION=\"v${target_version}\"
+
 LIB = libssum.1.so
 
 # Default prefix
 PREFIX = ${prefix}
-
-LDFLAGS = 
 
 EOF
 
@@ -127,6 +134,7 @@ if [ -z ${LIBRARY_PATH} ]; then
 	echo "LDFLAGS += -L${prefix}/lib" >> Makefile
 fi
 
+echo "" >> Makefile
 if [[ $option_without_library -eq 1 ]]; then
   echo "Not using library"
   echo ".PHONY:" >> Makefile
