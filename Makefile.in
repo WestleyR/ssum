@@ -1,25 +1,6 @@
-# Created by: WestleyR
-# email: westleyr@nym.hush.com
-# Date: Dec 20, 2019
-# https://github.com/WestleyR/ssum
-# Version-1.1.2
 #
-# The Clear BSD License
+# From Makefile.in
 #
-# Copyright (c) 2019 WestleyR
-# All rights reserved.
-#
-# This software is licensed under a Clear BSD License.
-#
-
-CC = gcc
-CFLAGS = -Wall
-
-TARGET = ssum
-LIB = libssum.1.so
-
-# Default prefix
-PREFIX = $(HOME)/.local
 
 SRC = $(wildcard src/*.c)
 LIB_SRC = $(wildcard lib/*.c)
@@ -103,5 +84,5 @@ uninstall: $(PREFIX)/$(TARGET)
 	rm -f $(PREFIX)/$(TARGET)
 
 #
-# End Makefile
+# End Makefile.in
 #

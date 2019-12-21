@@ -11,6 +11,7 @@ Clone the source code:
 ```
 git clone https://github.com/WestleyR/ssum
 cd ssum/
+./configure
 make install-lib  # install the ssum.1.so library
 make              # compile ssum
 make install      # install ssum

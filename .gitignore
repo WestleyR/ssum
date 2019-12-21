@@ -1,3 +1,4 @@
 /ssum
+/Makefile
 *.o
 *.so

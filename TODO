@@ -6,5 +6,5 @@
  - [ ] Dont use/create a shared library by default
  - [ ] Support for clib to install the library files
  - [ ] Maybe use rpath if LD_LIBRARY_PATH is not set?
- - [ ] Use a configure script
+ - [x] Use a configure script
 
