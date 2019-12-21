@@ -2,7 +2,7 @@
 # email: westleyr@nym.hush.com
 # Date: Dec 20, 2019
 # https://github.com/WestleyR/ssum
-# Version-1.1.1
+# Version-1.1.2
 #
 # The Clear BSD License
 #
@@ -37,13 +37,15 @@ endif
 
 LDFLAGS = 
 
+ifeq ($(RPATH), true)
+	LDFLAGS += -Wl,-rpath=$(PREFIX)/lib
+endif
 ifeq ($(CPATH),)
 	LDFLAGS += -I$(PREFIX)/include
 endif
 ifeq ($(LIBRARY_PATH),)
 	LDFLAGS += -L$(PREFIX)/lib
 endif
-
 
 .PHONY:
 all: $(TARGET)
@@ -93,8 +95,8 @@ install: $(TARGET)
 
 .PHONY:
 clean:
-	 rm -f $(TARGET) $(OBJS)
-	 make -C ./lib clean
+	rm -f $(TARGET) $(OBJS)
+	$(MAKE) -C ./lib clean
 
 .PHONY:
 uninstall: $(PREFIX)/$(TARGET)
