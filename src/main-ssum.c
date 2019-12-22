@@ -26,7 +26,9 @@
 #include <ssum.1.h>
 #endif
 
-#define SCRIPT_VERSION "v2.0.1, Dec 21, 2019"
+#ifndef SSUM_VERSION
+#define SSUM_VERSION "unknown"
+#endif
 
 #define DEFAULT_BLOCK_SIZE 20
 
@@ -35,7 +37,7 @@
 #endif
 
 void print_version() {
-  printf("lib-ssum version: %s; ssum version: %s\n", libssum_version(), SCRIPT_VERSION);
+  printf("%s\n", SSUM_VERSION);
 }
 
 void print_commit() {

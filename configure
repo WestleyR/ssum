@@ -3,7 +3,7 @@
 # email: westleyr@nym.hush.com
 # Date: Dec 21, 2019
 # https://github.com/WestleyR/ssum
-# Version-1.0.3
+# Version-1.0.4
 #
 # The Clear BSD License
 #
@@ -18,6 +18,7 @@ set -e
 # Default settings
 target="ssum"
 target_version="3.0.0"
+full_target_version="v${target_version}, Dec 21, 2019"
 
 prefix="${HOME}/.local"
 cc="gcc"
@@ -87,7 +88,7 @@ cat << EOF > Makefile
 # email: westleyr@nym.hush.com
 # Date: Dec 21, 2019
 # https://github.com/WestleyR/ssum
-# Version-2.0.3
+# Version-2.0.4
 #
 # The Clear BSD License
 #
@@ -112,7 +113,7 @@ TARGET_VERSION = ${target_version}
 DEFINE_FLAGS = 
 LDFLAGS = 
 
-DEFINE_FLAGS += -DMAIN_VERSION=\"v${target_version}\"
+DEFINE_FLAGS += -DSSUM_VERSION="\"${full_target_version}\""
 
 LIB = libssum.1.so
 
