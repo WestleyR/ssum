@@ -19,7 +19,7 @@ endif
 
 .PHONY:
 $(TARGET): $(SRC)
-	$(CC) $(CFLAGS) src/main-ssum.c -lssum.1 -o $(TARGET) $(LDFLAGS)
+	$(CC) $(CFLAGS) $(DEFINE_FLAGS) src/main-ssum.c -lssum.1 -o $(TARGET) $(LDFLAGS)
 
 .PHONY:
 install-lib: $(LIB)
