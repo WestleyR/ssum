@@ -1,9 +1,9 @@
 #!/bin/bash
 # Created by: WestleyR
 # email: westleyr@nym.hush.com
-# Date: Dec 21, 2019
+# Date: Dec 22, 2019
 # https://github.com/WestleyR/ssum
-# Version-1.0.5
+# Version-1.0.6
 #
 # The Clear BSD License
 #
@@ -18,7 +18,7 @@ set -e
 # Default settings
 target="ssum"
 target_version="3.0.0"
-full_target_version="v${target_version}, Dec 21, 2019"
+full_target_version="v${target_version}-beta-1, Dec 22, 2019"
 
 prefix="${HOME}/.local"
 cc="gcc"
@@ -124,18 +124,7 @@ EOF
 if [ -z $GPACK_ARCH ]; then
   echo "\$GPACK_ARCH not set, cant make gpack package"
 else
-  if [[ "${GPACK_ARCH}" = "X86_64_LINUX" ]]; then
-    echo "PKG_ARCH = x86_64_linux" >> Makefile
-  elif [[ "${GPACK_ARCH}" = "MACOS" ]]; then
-    echo "PKG_ARCH = macos" >> Makefile
-  elif [[ "${GPACK_ARCH}" = "ARMV6L" ]]; then
-    echo "PKG_ARCH = armv6l" >> Makefile
-  elif [[ "${GPACK_ARCH}" = "ARMV7L" ]]; then
-    echo "PKG_ARCH = armv7l" >> Makefile
-  else
-    echo "Unknown gpack arch. Please update this repo, or open a issue at https://github.com/WestleyR/ssum"
-    echo "PKG_ARCH = unknown" >> Makefile
-  fi
+  echo "PKG_ARCH = ${GPACK_ARCH}" >> Makefile
 fi
 
 if [[ $option_rpath -eq 1 ]]; then

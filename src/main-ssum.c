@@ -1,8 +1,8 @@
 // created by: WestleyR
 // email: westleyr@nym.hush.com
 // https://github.com/WestleyR/ssum
-// date: Dec 21, 2019
-// version-2.0.0
+// date: Dec 22, 2019
+// version-3.0.0
 //
 // The Clear BSD License
 //
