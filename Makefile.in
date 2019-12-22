@@ -75,10 +75,10 @@ gpack-package: clean $(LIB) without-lib
 	mkdir -p ./gpack-package/$(TARGET)/$(TARGET_VERSION)/bin
 	cp -f $(TARGET) ./gpack-package/$(TARGET)/$(TARGET_VERSION)/bin
 	
-	cd ./gpack-package
-	tar -czf $(TARGET)-v$(TARGET_VERSION)-$(PKG_ARCH).tar.gz $(TARGET)
-	@echo "sha256sum for package:"
-	@sha256sum $(TARGET)-v$(TARGET_VERSION)-$(PKG_ARCH).tar.gz
+	cd ./gpack-package && \
+		tar -czf $(TARGET)-v$(TARGET_VERSION)-$(PKG_ARCH).tar.gz $(TARGET) && \
+		echo "sha256sum for package:" && \
+		sha256sum $(TARGET)-v$(TARGET_VERSION)-$(PKG_ARCH).tar.gz
 
 .PHONY:
 uninstall: $(PREFIX)/bin/$(TARGET)
