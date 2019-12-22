@@ -121,7 +121,6 @@ int main(int argc, char** argv) {
           fprintf(stderr, "Invalid block size\n");
           return(1);
         }
-        printf("BLOCK_SIZE: %d\n", block_size);
         break;
 
       case 'V':
