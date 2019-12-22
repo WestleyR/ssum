@@ -1,0 +1,10 @@
+
+set -e
+
+echo "ec34121c tests/testdata/hello-world.txt" | ./ssum -c
+echo "ec34121c ./tests/testdata/hello-world.txt" | ./ssum -c
+
+if echo "ec34120c tests/testdata/hello-world.txt" | ./ssum -c &> /dev/null ; then false; fi
+if ( echo "ec34120c tests/testdata/hello-world.txt" | ./ssum -c &> /dev/null ) ; then false; fi
+
+

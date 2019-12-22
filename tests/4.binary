@@ -1,0 +1,11 @@
+
+set -e
+
+./ssum tests/testdata/urandom.binary
+
+echo "cc93fb14 tests/testdata/urandom.binary" | ./ssum -c
+
+if echo "ec34120c tests/testdata/hello-world.txt" | ./ssum -c &> /dev/null ; then false; fi
+
+if echo "cc93fb12 tests/testdata/urandom.binary" | ./ssum -c &> /dev/null ; then false; fi
+
