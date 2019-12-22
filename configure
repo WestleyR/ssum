@@ -3,7 +3,7 @@
 # email: westleyr@nym.hush.com
 # Date: Dec 21, 2019
 # https://github.com/WestleyR/ssum
-# Version-1.0.4
+# Version-1.0.5
 #
 # The Clear BSD License
 #
@@ -144,13 +144,8 @@ if [[ $option_rpath -eq 1 ]]; then
 fi
 
 if [[ $option_without_library -eq 0 ]]; then
-  if [ -z ${CPATH} ]; then
-    echo "LDFLAGS += -I${prefix}/include" >> Makefile
-  fi
-
-  if [ -z ${LIBRARY_PATH} ]; then
-    echo "LDFLAGS += -L${prefix}/lib" >> Makefile
-  fi
+  echo "LDFLAGS += -I${prefix}/include" >> Makefile
+  echo "LDFLAGS += -L${prefix}/lib" >> Makefile
 fi
 
 echo "" >> Makefile
