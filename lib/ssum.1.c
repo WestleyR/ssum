@@ -1,7 +1,7 @@
 // created by: WestleyR
 // email: westleyr@nym.hush.com
 // https://github.com/WestleyR/ssum
-// date: Dec 21, 2019
+// date: Dec 24, 2019
 // version-3.0.0
 //
 // The Clear BSD License
@@ -130,10 +130,29 @@ unsigned int crc32_file(FILE* fp, int block_size) {
   }
 
 #ifdef DEBUG
-  printf("Int hash: %d\n", hsum);
+  printf("Int hash: %08x\n", hsum);
 #endif
 
   return(hsum);
+}
+
+// Cant reliably use strtol, need to use a custom function.
+int hexstr_int(char *hexstr) {
+  int ret = 0;
+  while (*hexstr != '\0') {
+    int hexnum = *hexstr++;
+    if (hexnum >= '0' && hexnum <= '9') {
+      hexnum = hexnum - '0';
+    } else if (hexnum >= 'a' && hexnum <= 'f') {
+      hexnum = hexnum - 'a' + 10;
+    } else if (hexnum >= 'A' && hexnum <= 'F') {
+      hexnum = hexnum - 'A' + 10;
+    }
+    // Shift 4 spaces to make space for new digit, and add the 4 bits of the new digit
+    ret = (ret << 4) | (hexnum & 0xf);
+  }
+
+  return(ret);
 }
 
 // check_crc32_file will take a open file, and look for a hash, and a file
@@ -169,7 +188,7 @@ int check_crc32_file(FILE* fp, int block_size) {
       fprintf(stderr, "Bad checksum file: %s\n", check_file);
       return(1);
     }
-    int num_hash = (int)strtol(hash, NULL, 16);
+    int num_hash = hexstr_int(hash);
     if (real_checksum != num_hash) {
       printf("%s: FAIL: hashes differ\n", check_file);
       checksumOK = 1;
@@ -177,9 +196,9 @@ int check_crc32_file(FILE* fp, int block_size) {
       printf("%s: OK\n", check_file);
     }
 #ifdef DEBUG
-    printf("hash: %d\n", num_hash);
+    printf("hash: %08x\n", num_hash);
     printf("file: %s\n", check_file);
-    printf("Real checksum: %d\n", real_checksum);
+    printf("Real checksum: %08x\n", real_checksum);
 #endif
   }
 

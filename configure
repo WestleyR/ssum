@@ -1,7 +1,7 @@
 #!/bin/bash
 # Created by: WestleyR
 # email: westleyr@nym.hush.com
-# Date: Dec 22, 2019
+# Date: Dec 24, 2019
 # https://github.com/WestleyR/ssum
 # Version-1.0.6
 #
@@ -18,7 +18,7 @@ set -e
 # Default settings
 target="ssum"
 target_version="3.0.0"
-full_target_version="v${target_version}-beta-1, Dec 22, 2019"
+full_target_version="v${target_version}-beta-2, Dec 24, 2019"
 
 prefix="${HOME}/.local"
 cc="gcc"
