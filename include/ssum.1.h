@@ -1,7 +1,7 @@
 // created by: WestleyR
 // email: westleyr@nym.hush.com
 // https://github.com/WestleyR/ssum
-// date: Dec 21, 2019
+// date: Jan 1, 2020
 // version: na; see ssum.1.c
 //
 // The Clear BSD License
@@ -14,7 +14,7 @@
 
 #ifndef INCLUDE_SSUM_H
 #define INCLUDE_SSUM_H
-#define SSUM_HEADERFILE_VERSION "v1.1.0, Dec 21, 2019"
+#define SSUM_HEADERFILE_VERSION "v1.1.0, Jan 1, 2020"
 
 #include <stdio.h>
 #include <string.h>
@@ -82,6 +82,17 @@ int check_crc32_file(FILE* fp, int block_size);
 // Returns `0` (zero) if the checksum and file match. Returns `1` if it does not.
 // And `-1` if theres a other error.
 //
+
+int hexstr_int(const char *hexstr);
+// ### Parameters
+// 
+// hexstr is the hex string, like: '123ff' (without the 0x prefix).
+// 
+// ### Returns
+//
+// The hexstr converted to the int.
+//
+
 
 #endif // INCLUDE_SSUM_H
 

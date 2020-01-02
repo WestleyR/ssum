@@ -1,7 +1,7 @@
 // created by: WestleyR
 // email: westleyr@nym.hush.com
 // https://github.com/WestleyR/ssum
-// date: Dec 24, 2019
+// date: Jan 1, 2020
 // version-3.0.0
 //
 // The Clear BSD License
@@ -71,7 +71,7 @@ static const unsigned int hash_index[] = {
 };
 
 const char* libssum_version() {
-  return("v3.0.0-beta-1, Dec 19, 2019");
+  return("v3.0.0-beta-2, Jan 1, 2020");
 }
 
 // crc32_hash will generate a crc checksum for a *message, using the
@@ -136,8 +136,8 @@ unsigned int crc32_file(FILE* fp, int block_size) {
   return(hsum);
 }
 
-// Cant reliably use strtol, need to use a custom function.
-int hexstr_int(char *hexstr) {
+// Cant reliably use strtol, need to use a costume function.
+int hexstr_int(const char *hexstr) {
   int ret = 0;
   while (*hexstr != '\0') {
     int hexnum = *hexstr++;
@@ -148,8 +148,7 @@ int hexstr_int(char *hexstr) {
     } else if (hexnum >= 'A' && hexnum <= 'F') {
       hexnum = hexnum - 'A' + 10;
     }
-    // Shift 4 spaces to make space for new digit, and add the 4 bits of the new digit
-    ret = (ret << 4) | (hexnum & 0xf);
+    ret = (ret << 4) | hexnum;
   }
 
   return(ret);
