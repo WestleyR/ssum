@@ -1,9 +1,9 @@
 #!/bin/bash
 # Created by: WestleyR
 # email: westleyr@nym.hush.com
-# Date: Dec 24, 2019
+# Date: Jan 1, 2020
 # https://github.com/WestleyR/ssum
-# Version-1.0.6
+# Version-1.0.7
 #
 # The Clear BSD License
 #
@@ -18,7 +18,7 @@ set -e
 # Default settings
 target="ssum"
 target_version="3.0.0"
-full_target_version="v${target_version}-beta-2, Dec 24, 2019"
+full_target_version="v${target_version}-beta-4, Jan 1, 2020"
 
 prefix="${HOME}/.local"
 cc="gcc"
