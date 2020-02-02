@@ -1,12 +1,16 @@
-// created by: WestleyR
-// email: westleyr@nym.hush.com
+// Created by: WestleyR
+// Email(s): westleyr@nym.hush.com
+// Last modifyed date: Jan 20, 2020
+// This file version-3.0.0
+//
+// This file is part of the ssum software:
 // https://github.com/WestleyR/ssum
-// date: Dec 22, 2019
-// version-3.0.0
+//
+// Which that software and this file is licensed under:
 //
 // The Clear BSD License
 //
-// Copyright (c) 2019 WestleyR
+// Copyright (c) 2019-2020 WestleyR
 // All rights reserved.
 //
 // This software is licensed under a Clear BSD License.
@@ -183,7 +187,13 @@ int main(int argc, char** argv) {
     }
   } else {
     int ecode = handle_files(stdin, "-", checksum_file, check_file, block_size);
-    return(ecode);
+    if (ecode != 0) {
+      exit_code = 1;
+    }
+  }
+
+  if (exit_code != 0) {
+    fprintf(stderr, "A checksum did not match\n");
   }
 
   return(exit_code);

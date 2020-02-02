@@ -1,12 +1,16 @@
-// created by: WestleyR
-// email: westleyr@nym.hush.com
+// Created by: WestleyR
+// Email(s): westleyr@nym.hush.com
+// Last modifyed date: Jan 20, 2020
+// This file version-3.0.0
+//
+// This file is part of the ssum software:
 // https://github.com/WestleyR/ssum
-// date: Jan 1, 2020
-// version: na; see ssum.1.c
+//
+// Which that software and this file is licensed under:
 //
 // The Clear BSD License
 //
-// Copyright (c) 2019 WestleyR
+// Copyright (c) 2019-2020 WestleyR
 // All rights reserved.
 //
 // This software is licensed under a Clear BSD License.
