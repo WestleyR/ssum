@@ -1,6 +1,6 @@
 // Created by: WestleyR
 // Email(s): westleyr@nym.hush.com
-// Last modifyed date: Jan 20, 2020
+// Last modifyed date: Mar 1, 2020
 // This file version-3.0.0
 //
 // This file is part of the ssum software:
@@ -74,13 +74,14 @@ int handle_files(FILE* fp, const char* filename, int checksum_file, int check_fi
     return(1);
   }
 
-  if (checksum_file) {
+  if (checksum_file == 1) {
     int filehash = crc32_file(fp, block_size);
     if (filehash == -1) {
+      printf("Filehash: %d\n", (unsigned int)filehash);
       return(1);
     }
     printf("%08x %s\n", filehash, filename);
-  } else if (check_file) {
+  } else if (check_file == 1) {
     int ecode = check_crc32_file(fp, block_size);
     if (ecode != 0) {
       ret = 1;
@@ -168,9 +169,9 @@ int main(int argc, char** argv) {
       }
 
       FILE* fp = NULL;
-      if (checksum_file) {
+      if (checksum_file == 1) {
         fp = fopen(argv[i], "rb");
-      } else if (check_file) {
+      } else if (check_file == 1) {
         fp = fopen(argv[i], "r");
       }
 

@@ -1,11 +1,11 @@
 #!/bin/bash
 # Created by: WestleyR
 # Email(s): westleyr@nym.hush.com
-# Last modifyed date: Jan 20, 2020
-# This file version-1.0.8
+# Last modifyed date: Mar 1, 2020
+# This file version-1.0.9
 #
-# This file is part of the <progname> software:
-# https://github.com/username/repo
+# This file is part of the ssum software:
+# https://github.com/WestleyR/ssum
 #
 # Which that software and this file is licensed under:
 #
@@ -22,7 +22,7 @@ set -e
 # Default settings
 target="ssum"
 target_version="3.0.0"
-full_target_version="v${target_version}-beta-6, Jan 20, 2020"
+full_target_version="v${target_version}-beta-8, Mar 1, 2020"
 
 prefix="${HOME}/.local"
 cc="gcc"

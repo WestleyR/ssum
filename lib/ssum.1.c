@@ -1,6 +1,6 @@
 // Created by: WestleyR
 // Email(s): westleyr@nym.hush.com
-// Last modifyed date: Jan 20, 2020
+// Last modifyed date: Mar 1, 2020
 // This file version-3.0.0
 //
 // This file is part of the ssum software:
@@ -106,7 +106,12 @@ unsigned int crc32_file(FILE* fp, int block_size) {
     ssum_block_size = block_size;
   }
 
+  if (fp == NULL) {
+    return(0);
+  }
+
   unsigned int hsum = 0;
+  int file_content = 0;
 
   while (c != EOF) {
     c = fgetc(fp); 
@@ -114,6 +119,9 @@ unsigned int crc32_file(FILE* fp, int block_size) {
       line[line_count] = '\0';
       int h = crc32_hash((unsigned char*)line, strlen(line));
       hsum += h;
+      if (file_content == 0) {
+        hsum = 0;
+      }
       break;
     }
 
@@ -131,6 +139,7 @@ unsigned int crc32_file(FILE* fp, int block_size) {
       line[0] = '\0';
       line_count = 0;
     }
+    file_content = 1;
   }
 
 #ifdef DEBUG
