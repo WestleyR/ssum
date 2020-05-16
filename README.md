@@ -49,6 +49,12 @@ PREFIX = $(HOME)/.local
 This can be changed by passing `--prefix /some/prefix` to the `configure`
 script.
 
+Or install with a package manager using [gpack](https://github.com/WestleyR/gpack):
+
+```
+gpack install WestleyR/ssum
+```
+
 <br>
 
 ## Example

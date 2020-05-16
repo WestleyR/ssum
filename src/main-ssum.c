@@ -1,12 +1,9 @@
 // Created by: WestleyR
-// Email(s): westleyr@nym.hush.com
-// Last modifyed date: Mar 1, 2020
-// This file version-3.0.0
+// Email: westleyr@nym.hush.com
+// Url: https://github.com/WestleyR/ssum
+// Last modified date: 2020-05-15
 //
-// This file is part of the ssum software:
-// https://github.com/WestleyR/ssum
-//
-// Which that software and this file is licensed under:
+// This file is licensed under the terms of
 //
 // The Clear BSD License
 //
@@ -64,11 +61,13 @@ void print_usage(const char* name) {
   printf("\n");
 }
 
+int total_files = 0;
+int failed_files = 0;
+
 int handle_files(FILE* fp, const char* filename, int checksum_file, int check_file, int block_size) {
   if (checksum_file == check_file) {
     return(1);
   }
-  int ret = 0;
 
   if (fp == NULL) {
     return(1);
@@ -81,14 +80,19 @@ int handle_files(FILE* fp, const char* filename, int checksum_file, int check_fi
       return(1);
     }
     printf("%08x %s\n", filehash, filename);
+    total_files++;
   } else if (check_file == 1) {
-    int ecode = check_crc32_file(fp, block_size);
+    int tf = 0;
+    int ff = 0;
+    int ecode = check_crc32_file(fp, block_size, &tf, &ff);
+    total_files += tf;
+    failed_files += ff;
     if (ecode != 0) {
-      ret = 1;
+      return 1;
     }
   }
 
-  return(ret);
+  return 0;
 }
 
 int main(int argc, char** argv) {
@@ -157,6 +161,7 @@ int main(int argc, char** argv) {
       fprintf(stderr, "Invallid file(s)\n");
       return(1);
     }
+
     for (int i = optind; i < argc; i++) {
       struct stat st;
       if (stat(argv[i], &st) != 0) {
@@ -193,8 +198,11 @@ int main(int argc, char** argv) {
     }
   }
 
-  if (exit_code != 0) {
-    fprintf(stderr, "A checksum did not match\n");
+  if (failed_files > 0) {
+    fprintf(stderr, "%s: %d of %d files failed\n", argv[0], failed_files, total_files);
+    exit_code = 1;
+  } else if (check_file == 1) {
+    printf("%s: %d files passed\n", argv[0], total_files);
   }
 
   return(exit_code);

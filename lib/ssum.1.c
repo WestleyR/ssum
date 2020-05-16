@@ -1,12 +1,9 @@
 // Created by: WestleyR
-// Email(s): westleyr@nym.hush.com
-// Last modifyed date: Mar 1, 2020
-// This file version-3.0.0
+// Email: westleyr@nym.hush.com
+// Url: https://github.com/WestleyR/ssum
+// Last modified date: 2020-05-15
 //
-// This file is part of the ssum software:
-// https://github.com/WestleyR/ssum
-//
-// Which that software and this file is licensed under:
+// This file is licensed under the terms of
 //
 // The Clear BSD License
 //
@@ -75,7 +72,7 @@ static const unsigned int hash_index[] = {
 };
 
 const char* libssum_version() {
-  return("v3.0.0-beta-2, Jan 1, 2020");
+  return("v3.0.0, Apr 15, 2020");
 }
 
 // crc32_hash will generate a crc checksum for a *message, using the
@@ -170,7 +167,7 @@ int hexstr_int(const char *hexstr) {
 // check_crc32_file will take a open file, and look for a hash, and a file
 // name, eg. '1234567890 hello.txt'. Then verifies the 'hello.txt' matches
 // the hash, if not; return 1 if mismatch.
-int check_crc32_file(FILE* fp, int block_size) {
+int check_crc32_file(FILE* fp, int block_size, int* total_files, int* failed_files) {
   int checksumOK = 0;
 
   int ssum_block_size;
@@ -203,6 +200,7 @@ int check_crc32_file(FILE* fp, int block_size) {
     int num_hash = hexstr_int(hash);
     if (real_checksum != num_hash) {
       printf("%s: FAIL: hashes differ\n", check_file);
+      (*failed_files)++;
       checksumOK = 1;
     } else {
       printf("%s: OK\n", check_file);
@@ -212,6 +210,7 @@ int check_crc32_file(FILE* fp, int block_size) {
     printf("file: %s\n", check_file);
     printf("Real checksum: %08x\n", real_checksum);
 #endif
+    (*total_files)++;
   }
 
   return(checksumOK);

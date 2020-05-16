@@ -1,12 +1,9 @@
 // Created by: WestleyR
-// Email(s): westleyr@nym.hush.com
-// Last modifyed date: Jan 20, 2020
-// This file version-3.0.0
+// Email: westleyr@nym.hush.com
+// Url: https://github.com/WestleyR/ssum
+// Last modified date: 2020-05-15
 //
-// This file is part of the ssum software:
-// https://github.com/WestleyR/ssum
-//
-// Which that software and this file is licensed under:
+// This file is licensed under the terms of
 //
 // The Clear BSD License
 //
@@ -18,7 +15,7 @@
 
 #ifndef INCLUDE_SSUM_H
 #define INCLUDE_SSUM_H
-#define SSUM_HEADERFILE_VERSION "v1.1.0, Jan 1, 2020"
+#define SSUM_HEADERFILE_VERSION "v3.0.0, Apr 15, 2020"
 
 #include <stdio.h>
 #include <string.h>
@@ -75,11 +72,13 @@ unsigned int crc32_file(FILE* fp, int block_size);
 // The crc for the contents of the file.
 //
 
-int check_crc32_file(FILE* fp, int block_size);
+int check_crc32_file(FILE* fp, int block_size, int* total_files, int* failed_files);
 // ### Parameters
 // 
-// `fp` is the open file that contains the hash for a file. Open the file in read
-// mode, and non-binary (`"r"`). `block_size` is the size of the block to read.
+// `fp` is the open file that contains the hash for a file. Open the file in read.
+// `mode`, and non-binary (`"r"`). `block_size` is the size of the block to read.
+// `*total_files` is the pointer to the total files checked.
+// `*failed_files` is the pointer to the total failed files checked.
 // 
 // ### Returns
 // 
