@@ -7,4 +7,5 @@
  - [x] Support for clib to install the library files
  - [x] Use rpath if option permits
  - [x] Use a configure script
+ - [ ] Make libssum.1.so have no dependent libraries
 

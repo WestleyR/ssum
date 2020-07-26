@@ -1,7 +1,7 @@
 // Created by: WestleyR
 // Email: westleyr@nym.hush.com
 // Url: https://github.com/WestleyR/ssum
-// Last modified date: 2020-05-15
+// Last modified date: 2020-07-24
 //
 // This file is licensed under the terms of
 //
@@ -72,7 +72,7 @@ static const unsigned int hash_index[] = {
 };
 
 const char* libssum_version() {
-  return("v3.0.0, Apr 15, 2020");
+  return("3.0.0.a1");
 }
 
 // crc32_hash will generate a crc checksum for a *message, using the
@@ -165,7 +165,7 @@ int hexstr_int(const char *hexstr) {
 }
 
 // check_crc32_file will take a open file, and look for a hash, and a file
-// name, eg. '1234567890 hello.txt'. Then verifies the 'hello.txt' matches
+// name, eg. '12345678 hello.txt'. Then verifies the 'hello.txt' matches
 // the hash, if not; return 1 if mismatch.
 int check_crc32_file(FILE* fp, int block_size, int* total_files, int* failed_files) {
   int checksumOK = 0;

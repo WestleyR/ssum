@@ -2,7 +2,7 @@
 
 ![](https://github.com/WestleyR/ssum/workflows/ssum%20CI/badge.svg)
 
-This is a simple checksum program using CRC32.
+This is a simple, 8 digit checksum program using CRC.
 
 ## Install
 
@@ -55,8 +55,6 @@ Or install with a package manager using [gpack](https://github.com/WestleyR/gpac
 gpack install WestleyR/ssum
 ```
 
-<br>
-
 ## Example
 
 ```
@@ -76,9 +74,9 @@ configure: OK
 ### Using the shared library for other projects
 
 This also comes with a shared library (`libssum.1.so`) that other projects can
-use. By default, it is installed in `~/.local/lib`, and the header file is in
-`~/.local/include`. To make this accessible to your c compiler, you need to add
-this to your `~/.bashrc` file:
+use. By default, the library is installed in `~/.local/lib`, and the header
+file is in `~/.local/include`. To make this accessible to your c compiler, you
+need to add this to your `~/.bashrc` file:
 
 ```
 export CPATH=${HOME}/.local/include:${CPATH}
@@ -108,8 +106,8 @@ LDFLAGS += -L/home/westleyk/.lib -I/home/westleyk/.lib/include
 
 #### Use gpack to install/manage the library (beta)
 
-You can also use [gpack](https://github.com/WestleyR/gpack) to manage/install/update/remove the library, and
-can be installed with:
+You can also use [gpack](https://github.com/WestleyR/gpack) to
+manage/install/update/remove the library, and can be installed with:
 
 ```
 gpack install WestleyR/lib-ssum
@@ -126,55 +124,7 @@ gpack install WestleyR/ssum
 
 _lib-ssum will be installed if not already, since lib-ssum is needed for ssum._
 
-<br>
-
 ### Library API/functions
 
-This documentation may be outdated. Please see the `include/ssum.1.h` file for more details.
+Please see the `include/ssum.1.h` file for more details.
 
-### `const char* libssum_version();`
-
-#### Parameters
-
-Non.
-
-#### Returns
-
-The libssum version, like `v3.0.0, Dec 19, 2019`.
-
-
-### `unsigned int crc32_hash(const unsigned char *message, int msg_len);`
-
-#### Parameters
-
-`message` is a string. `msg_len` is the length of the message/string.
-
-#### Returns
-
-The crc for the given `message`.
-
-
-### `unsigned int crc32_file(FILE* fp);`
-
-#### Parameters
-
-`fp` is the open file to read from, read it as a binary file (`"rb"`).
-
-#### Returns
-
-The crc for the contents of the file.
-
-
-### `int check_crc32_file(FILE* fp);`
-
-#### Parameters
-
-`fp` is the open file that contains the hash for a file. Open the file in read
-mode, and non-binary (`"r"`).
-
-#### Returns
-
-Returns `0` (zero) if the checksum and file match. Returns `1` if it does not.
-And `-1` if theres a other error.
-
-<br>
